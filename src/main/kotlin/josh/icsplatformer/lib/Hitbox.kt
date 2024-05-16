@@ -13,8 +13,8 @@ data class Hitbox(var min: Vec2 = Vec2(), var max: Vec2 = Vec2()) {
         return !(d1x > 0.0 || d1y > 0.0 || d2x > 0.0 || d2y > 0.0)
     }
 
-    operator fun plusAssign(other: Vec2) {
-        min.plusAssign(other)
-        max.plusAssign(other)
+    fun move(dist: Vec2) {
+        min.plusAssign(dist)
+        max.plusAssign(dist)
     }
 }

@@ -13,6 +13,6 @@ class Player(private val gc: GraphicsContext, private var pos: Hitbox = Hitbox()
     }
 
     fun update(dt: Double) {
-        pos.plusAssign(Vec2(5.0, 0.0).scalarMult(dt/1e3))
+        pos.move(Vec2(5.0, 0.0).scalarMult(dt/1e3))
     }
 }
