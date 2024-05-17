@@ -1,5 +1,7 @@
 package josh.icsplatformer
 
+import josh.icsplatformer.entities.Platform
+
 class PlatformManager(var platforms: MutableList<Platform> = mutableListOf()) {
     
     fun show() {

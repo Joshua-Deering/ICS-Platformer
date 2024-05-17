@@ -2,7 +2,7 @@ package josh.icsplatformer
 
 import javafx.animation.AnimationTimer
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.paint.Color
+import josh.icsplatformer.entities.Player
 import josh.icsplatformer.lib.Hitbox
 import josh.icsplatformer.lib.Vec2
 
@@ -26,8 +26,6 @@ class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
 
         player.update(msSinceLastFrame)
         player.show()
-
-
     }
 
 }
