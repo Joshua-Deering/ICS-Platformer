@@ -23,11 +23,11 @@ class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
 
     private fun tick(msSinceLastFrame: Double) {
         gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
-        gc.fill = Color.BLUE
-        gc.fillRect(10.0, 10.0, 100.0, 100.0)
 
         player.update(msSinceLastFrame)
         player.show()
+
+
     }
 
 }
