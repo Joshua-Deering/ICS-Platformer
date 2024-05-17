@@ -1,4 +1,4 @@
-package josh.icsplatformer
+package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
@@ -11,16 +11,16 @@ import josh.icsplatformer.lib.Vec2
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(private val gc: GraphicsContext, private var pos: Hitbox = Hitbox()) {
+class Player(private val gc: GraphicsContext, private var pos: Hitbox = Hitbox()) : Entity(gc, pos) {
 
     /**
      * Draws this player on the given GraphicsContext
      */
-    fun show() {
+    override fun show() {
         gc.fill = Color.RED
         gc.fillRect(pos.min.x, pos.min.y, pos.width, pos.height)
 
-        TODO("sprite/sprite animation")
+        //TODO("sprite/sprite animation")
     }
 
     /**
@@ -28,9 +28,9 @@ class Player(private val gc: GraphicsContext, private var pos: Hitbox = Hitbox()
      *
      * @param dt Millisecond(s) since last frame/update
      */
-    fun update(dt: Double) {
+    override fun update(dt: Double) {
         pos.move(Vec2(5.0, 0.0).scalarMult(dt/1e3))
 
-        TODO("Physics")
+        //TODO("Physics")
     }
 }

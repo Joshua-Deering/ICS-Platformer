@@ -1,4 +1,4 @@
-package josh.icsplatformer
+package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
