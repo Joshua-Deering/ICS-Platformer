@@ -9,6 +9,8 @@ package josh.icsplatformer.lib
 data class Hitbox(var min: Vec2 = Vec2(), var max: Vec2 = Vec2()) {
     val width = max.x - min.x
     val height = max.y - min.y
+    val beginX = min.x
+    val endX = max.x
 
     /**
      * Checks whether this Hitbox overlaps with another Hitbox
@@ -30,5 +32,10 @@ data class Hitbox(var min: Vec2 = Vec2(), var max: Vec2 = Vec2()) {
     fun move(dist: Vec2) {
         min.plusAssign(dist)
         max.plusAssign(dist)
+    }
+
+    fun setPos(topLeft: Vec2) {
+        min = topLeft
+        max = Vec2(topLeft.x + width, topLeft.y + height)
     }
 }
