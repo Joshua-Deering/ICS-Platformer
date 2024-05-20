@@ -2,29 +2,43 @@ package josh.icsplatformer
 
 import javafx.animation.AnimationTimer
 import javafx.scene.canvas.GraphicsContext
+import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
-import josh.icsplatformer.lib.Hitbox
 import josh.icsplatformer.lib.Vec2
+import java.awt.geom.Rectangle2D.Double as Rect
 
 class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
     private var lastTick: Long = System.nanoTime()
     private var isPaused: Boolean = false
 
-    private var player = Player(gc, Hitbox(Vec2(10.0, 200.0), Vec2(30.0, 250.0)))
+    private var player = Player(gc, Rect(50.0, 100.0, 20.0, 50.0))
+    private var tileMap = TileMap(gc,
+        mutableListOf(Tile(1, 6, 1)),
+        mutableListOf(Rect(50.0, 300.0, 50.0, 50.0)))
+    private var entityManager = EntityManager(mutableListOf(player), tileMap)
 
     override fun handle(now: Long) {
         if (!isPaused) {
-            val msSinceLastFrame = (now - lastTick)/1e6
+            //divided by 1e9 to convert from nanoseconds to seconds
+            val msSinceLastFrame = (now - lastTick)/1e9
             tick(msSinceLastFrame)
         }
 
         lastTick = now
     }
 
-    private fun tick(msSinceLastFrame: Double) {
+    private fun tick(dt: Double) {
         gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
 
-        player.update(msSinceLastFrame)
+        //UPDATE
+        tileMap.update(dt)
+        player.update(dt)
+
+        //COLLISION MANAGEMENT
+        entityManager.checkCollisions()
+
+        //RENDER
+        tileMap.show()
         player.show()
     }
 

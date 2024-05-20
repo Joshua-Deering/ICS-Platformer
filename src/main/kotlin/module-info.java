@@ -5,6 +5,7 @@ module josh.icsplatformer {
 
     requires org.controlsfx.controls;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens josh.icsplatformer to javafx.fxml;
     exports josh.icsplatformer;
