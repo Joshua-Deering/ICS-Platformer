@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.stage.Stage
 import java.io.File
-import java.net.URI
 
 class MainApp : Application() {
     override fun start(stage: Stage) {

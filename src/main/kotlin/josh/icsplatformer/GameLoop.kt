@@ -4,7 +4,6 @@ import javafx.animation.AnimationTimer
 import javafx.scene.canvas.GraphicsContext
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
-import josh.icsplatformer.lib.Vec2
 import java.awt.geom.Rectangle2D.Double as Rect
 
 class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
