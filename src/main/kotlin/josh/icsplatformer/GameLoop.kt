@@ -6,11 +6,11 @@ import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
 import java.awt.geom.Rectangle2D.Double as Rect
 
-class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
+class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyListener) : AnimationTimer() {
     private var lastTick: Long = System.nanoTime()
     private var isPaused: Boolean = false
 
-    private var player = Player(gc, Rect(50.0, 100.0, 20.0, 50.0))
+    private var player = Player(gc, Rect(50.0, 100.0, 20.0, 50.0), keyListener = keyListener)
     private var tileMap = TileMap(gc,
         mutableListOf(Tile(1, 6, 1)),
         mutableListOf(Rect(50.0, 300.0, 50.0, 50.0)))
@@ -31,14 +31,14 @@ class GameLoop(private val gc: GraphicsContext) : AnimationTimer() {
 
         //UPDATE
         tileMap.update(dt)
-        player.update(dt)
+        entityManager.update(dt)
 
         //COLLISION MANAGEMENT
         entityManager.checkCollisions()
 
         //RENDER
         tileMap.show()
-        player.show()
+        entityManager.show()
     }
 
 }

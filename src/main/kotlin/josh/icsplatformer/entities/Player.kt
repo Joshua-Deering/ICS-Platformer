@@ -2,6 +2,7 @@ package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import josh.icsplatformer.KeyListener
 import josh.icsplatformer.lib.Vec2
 import java.awt.geom.Rectangle2D.Double as Rect
 
@@ -11,7 +12,7 @@ import java.awt.geom.Rectangle2D.Double as Rect
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(private val gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2()) : Entity(pos) {
+class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
 
     /**
      * Draws this player on the given GraphicsContext
@@ -29,16 +30,26 @@ class Player(private val gc: GraphicsContext, pos: Rect, private var vel: Vec2 =
      */
     override fun update(dt: Double) {
         //displacement for this frame
-        val d = Vec2(3.0, 0.0)
+        val d = Vec2(0.0, 0.0)
 
         //adjust the velocity based on physics
-        vel.plusAssign(Vec2(0.0, 9.8))
+        vel.y -= 9.8
+
+        if (keyListener.keyDown("SPACE")) {
+            vel.y = 500.0
+        }
+        if (keyListener.keyDown("D")) {
+            vel.x = 10.0
+        }
+        if (keyListener.keyDown("A")) {
+            vel.x = -10.0
+        }
 
         //add the velocity to the displacement
         d.plusAssign(vel)
         d.scalarMult(dt)
 
-        pos.setRect(pos.x + d.x, pos.y + d.y, pos.width, pos.height)
+        pos.setRect(pos.x + d.x, pos.y - d.y, pos.width, pos.height)
 
         //temporarily to keep player onscreen
         if (pos.maxY > 450) {
@@ -50,15 +61,15 @@ class Player(private val gc: GraphicsContext, pos: Rect, private var vel: Vec2 =
 
     override fun collide(e: Entity) {
         //do stuff based on which entity we have collided with
-        //TODO("Not yet implemented")
+        //TODO("add logic for entity-entity collision")
     }
 
     override fun collideWithMap(other: Rect) {
-        vel = Vec2(0.0, 0.0)
         val collisionRect = pos.createIntersection(other)
 
         //collision on top or bottom of other
-        if (collisionRect.width > collisionRect.height) {
+        if (collisionRect.width >= collisionRect.height) {
+            vel.y = 0.0
             //collision on top side of other
             if (collisionRect.centerY > pos.centerY) {
                 pos.setRect(pos.x, other.minY - pos.height, pos.width, pos.height)
@@ -67,6 +78,7 @@ class Player(private val gc: GraphicsContext, pos: Rect, private var vel: Vec2 =
                 pos.setRect(pos.x, other.maxY, pos.width, pos.height)
             }
         } else { //collision on sides
+            vel.x = 0.0
             //collision on right side of other
             if (collisionRect.centerX < pos.centerX) {
                 pos.setRect(other.maxX, pos.y, pos.width, pos.height)

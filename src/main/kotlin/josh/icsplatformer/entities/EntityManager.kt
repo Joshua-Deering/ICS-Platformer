@@ -1,8 +1,21 @@
 package josh.icsplatformer.entities
 
+import josh.icsplatformer.KeyListener
 import josh.icsplatformer.TileMap
 
 class EntityManager(private var entities: MutableList<Entity> = mutableListOf(), private val tileMap: TileMap) {
+    fun update(dt: Double) {
+        for (e in entities) {
+            e.update(dt)
+        }
+    }
+
+    fun show() {
+        for (e in entities) {
+            e.show()
+        }
+    }
+
     fun checkCollisions() {
         //sort hitboxes to more efficiently check collisions
         quickSort(entities, 0, entities.size)

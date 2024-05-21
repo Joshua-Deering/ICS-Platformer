@@ -14,7 +14,8 @@ class MainApp : Application() {
         stage.title = "ICS-Platformer"
         stage.scene = scene
 
-        val gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D)
+        val keyListener = KeyListener(stage.scene)
+        val gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
         gameloop.start()
 
         stage.show()
