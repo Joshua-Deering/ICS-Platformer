@@ -13,6 +13,7 @@ import java.awt.geom.Rectangle2D.Double as Rect
  * @property pos This players Hitbox
  */
 class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
+    private var onGround: Boolean = false
 
     /**
      * Draws this player on the given GraphicsContext
@@ -36,15 +37,18 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
         vel.y -= 9.8
 
         if (keyListener.keyDown("SPACE")) {
-            vel.y = 500.0
+            if (onGround) {
+                vel.y = 250.0
+            }
         }
         if (keyListener.keyDown("D")) {
-            vel.x = 10.0
+            vel.x += 10.0
         }
         if (keyListener.keyDown("A")) {
-            vel.x = -10.0
+            vel.x -= 10.0
         }
 
+        vel.clamp(Vec2(-150.0, -250.0), Vec2(150.0, 250.0))
         //add the velocity to the displacement
         d.plusAssign(vel)
         d.scalarMult(dt)
@@ -56,7 +60,8 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
             pos.setRect(pos.x, 450.0 - pos.height, pos.width, pos.height)
         }
 
-        //TODO("Physics")
+        //reset state
+        onGround = false
     }
 
     override fun collide(e: Entity) {
@@ -68,7 +73,10 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
         val collisionRect = pos.createIntersection(other)
 
         //collision on top or bottom of other
-        if (collisionRect.width >= collisionRect.height) {
+        if (collisionRect.width + 5 >= collisionRect.height) {
+            //set player state
+            onGround = true
+
             vel.y = 0.0
             //collision on top side of other
             if (collisionRect.centerY > pos.centerY) {
