@@ -7,6 +7,8 @@ import javafx.stage.Stage
 import java.io.File
 
 class MainApp : Application() {
+    private lateinit var gameloop: GameLoop
+
     override fun start(stage: Stage) {
         val f = File("src/main/resources/josh/icsplatformer/main-view.fxml")
         val fxmlLoader = FXMLLoader(f.toURI().toURL())
@@ -15,10 +17,15 @@ class MainApp : Application() {
         stage.scene = scene
 
         val keyListener = KeyListener(stage.scene)
-        val gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
+        gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
         gameloop.start()
 
         stage.show()
+    }
+
+    override fun stop() {
+        println("stopping")
+        gameloop.stop()
     }
 }
 
