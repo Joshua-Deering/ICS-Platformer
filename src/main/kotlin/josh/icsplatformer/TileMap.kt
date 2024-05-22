@@ -12,9 +12,14 @@ class TileMap(private val gc: GraphicsContext, private val tiles: MutableList<Ti
     //x-offset for this tilemap
     private var offsetX: Double = 0.0
 
+    init {
+        println("")
+        //TODO("change this to use instances of chunks instead of one tilemap")
+        //TODO("add automatic generation of hitboxes based on tiles on map")
+    }
+
     fun update(dt: Double) {
         //offsetX += scrollVel*dt
-
     }
 
     fun show() {
