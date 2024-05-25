@@ -1,4 +1,4 @@
-package josh.icsplatformer
+package josh.icsplatformer.map
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D.Double as Rect
 const val TILE_WIDTH: Double = 50.0
 const val TILE_HEIGHT: Double = 50.0
 
-class TileMap(private val gc: GraphicsContext, private val tiles: MutableList<Tile> = mutableListOf(), val hitboxes: MutableList<Rect> = mutableListOf(), var scrollVel: Double = -1.0) {
+class TileMap(private val gc: GraphicsContext, val chunks: MutableList<Chunk>, var scrollVel: Double = -1.0) {
     //x-offset for this tilemap
     private var offsetX: Double = 0.0
 
@@ -23,11 +23,14 @@ class TileMap(private val gc: GraphicsContext, private val tiles: MutableList<Ti
     }
 
     fun show() {
-        gc.fill = Color.BLUE
-        for (tile in tiles) {
-            gc.fillRect(tile.x * TILE_WIDTH + offsetX, tile.y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
+        for (chunk in chunks) {
+            chunk.show()
         }
         //TODO("implement sprites for tiles")
+    }
+
+    fun getHitboxes(): List<Rect> {
+        return chunks.map{x -> x.hitboxes}.flatMap{it -> it.asIterable()}
     }
 }
 

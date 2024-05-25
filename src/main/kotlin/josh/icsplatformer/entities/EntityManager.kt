@@ -1,7 +1,6 @@
 package josh.icsplatformer.entities
 
-import josh.icsplatformer.KeyListener
-import josh.icsplatformer.TileMap
+import josh.icsplatformer.map.TileMap
 
 class EntityManager(private var entities: MutableList<Entity> = mutableListOf(), private val tileMap: TileMap) {
     fun update(dt: Double) {
@@ -36,10 +35,11 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
                 }
             }
 
+            val tileMapHbs = tileMap.getHitboxes()
             //entity-tilemap collisions (i.e collisions with platforms)
-            for (j in 0..tileMap.hitboxes.lastIndex) {
-                if (a.pos.intersects(tileMap.hitboxes[i])) {
-                    a.collideWithMap(tileMap.hitboxes[i])
+            for (j in 0..tileMapHbs.lastIndex) {
+                if (a.pos.intersects(tileMapHbs[i])) {
+                    a.collideWithMap(tileMapHbs[i])
                 }
             }
         }
