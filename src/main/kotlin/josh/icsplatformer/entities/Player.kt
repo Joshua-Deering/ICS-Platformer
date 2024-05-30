@@ -3,6 +3,7 @@ package josh.icsplatformer.entities
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import josh.icsplatformer.KeyListener
+import josh.icsplatformer.PlayerConstants
 import josh.icsplatformer.lib.Vec2
 import java.awt.geom.Rectangle2D.Double as Rect
 
@@ -14,6 +15,8 @@ import java.awt.geom.Rectangle2D.Double as Rect
  */
 class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
     private var onGround: Boolean = false
+    private var lastOnGround: Long = System.nanoTime()
+    private var jumped = false
 
     /**
      * Draws this player on the given GraphicsContext
@@ -30,35 +33,46 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
      * @param dt Second(s) since last frame/update
      */
     override fun update(dt: Double) {
+        //velocity adjustments (i.e drag, etc)
+        if(onGround) {
+            vel.x *= PlayerConstants.GROUND_DRAG
+        } else {
+            vel.x *= PlayerConstants.AIR_DRAG
+        }
+
+        val timeSinceOnGround = (System.nanoTime() - lastOnGround)/1e9
+        onGround = onGround || timeSinceOnGround < 0.083
+        if (timeSinceOnGround < 0.3) {
+            vel.y += PlayerConstants.GRAVITY
+        } else {
+            vel.y += PlayerConstants.FALLING_GRAVITY
+        }
+
         //displacement for this frame
         val d = Vec2(0.0, 0.0)
 
-        //adjust the velocity based on physics
-        vel.y -= 9.8
-
-        if (keyListener.keyDown("SPACE")) {
-            if (onGround) {
-                vel.y = 250.0
+        if (keyListener.keyDown("W")) {
+            if (onGround && !jumped) {
+                vel.y = PlayerConstants.JUMP_STRENGTH
+                jumped = true
             }
         }
         if (keyListener.keyDown("D")) {
-            vel.x += 10.0
+            vel.x += 13.0
         }
         if (keyListener.keyDown("A")) {
-            vel.x -= 10.0
+            vel.x -= 13.0
         }
 
-        vel.clamp(Vec2(-150.0, -250.0), Vec2(150.0, 250.0))
+        //limit velocity
+        vel.clamp(Vec2(-150.0, -300.0), Vec2(150.0, 300.0))
+
         //add the velocity to the displacement
         d.plusAssign(vel)
         d.scalarMult(dt)
 
+        //change position of player to reflect velocity changes
         pos.setRect(pos.x + d.x, pos.y - d.y, pos.width, pos.height)
-
-        //temporarily to keep player onscreen
-        if (pos.maxY > 450) {
-            pos.setRect(pos.x, 450.0 - pos.height, pos.width, pos.height)
-        }
 
         //reset state
         onGround = false
@@ -74,13 +88,14 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
 
         //collision on top or bottom of other
         if (collisionRect.width + 5 >= collisionRect.height) {
-            //set player state
-            onGround = true
-
-            vel.y = 0.0
             //collision on top side of other
             if (collisionRect.centerY > pos.centerY) {
+                vel.y = 0.0
                 pos.setRect(pos.x, other.minY - pos.height, pos.width, pos.height)
+                //set player state
+                onGround = true
+                lastOnGround = System.nanoTime()
+                jumped = false
             } else {
                 //collision on bottom side of other
                 pos.setRect(pos.x, other.maxY, pos.width, pos.height)

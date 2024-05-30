@@ -38,8 +38,8 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
             val tileMapHbs = tileMap.getHitboxes()
             //entity-tilemap collisions (i.e collisions with platforms)
             for (j in 0..tileMapHbs.lastIndex) {
-                if (a.pos.intersects(tileMapHbs[i])) {
-                    a.collideWithMap(tileMapHbs[i])
+                if (a.pos.intersects(tileMapHbs[j])) {
+                    a.collideWithMap(tileMapHbs[j])
                 }
             }
         }

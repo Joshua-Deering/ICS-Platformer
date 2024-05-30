@@ -30,8 +30,15 @@ class TileMap(private val gc: GraphicsContext, val chunks: MutableList<Chunk>, v
     }
 
     fun getHitboxes(): List<Rect> {
-        return chunks.map{x -> x.hitboxes}.flatMap{it -> it.asIterable()}
+        var hbs = mutableListOf<Rect>()
+        chunks.forEach{chunk -> hbs.addAll(chunk.hitboxes)}
+        return hbs
     }
 }
 
-data class Tile(val x: Int, val y: Int, val type: Int)
+data class Tile(val x: Int, val y: Int, val type: Int) : Comparable<Tile> {
+    override fun compareTo(other: Tile) = compareValuesBy(this, other, {it.x}, {it.y})
+    fun show(gc: GraphicsContext, posx: Double, posy: Double) {
+        gc.drawImage(MapTextures.textures[0], posx, posy, 50.0, 50.0)
+    }
+}

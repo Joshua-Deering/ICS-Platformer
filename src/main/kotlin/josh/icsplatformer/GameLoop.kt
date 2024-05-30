@@ -25,6 +25,10 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
             Chunk(gc, 0.0, mutableListOf(
                 Tile(1, 6, 1)),
                 mutableListOf(Rect(50.0, 300.0, 50.0, 50.0))
+            ),
+            Chunk(gc, 75.0, mutableListOf(
+                Tile(5, 2, 1), Tile(1, 6, 1), Tile(2, 3, 1), Tile(4, 5, 1), Tile(2, 2, 1)),
+//                mutableListOf(Rect(50.0, 300.0, 50.0, 50.0))
             )
         )
     )
