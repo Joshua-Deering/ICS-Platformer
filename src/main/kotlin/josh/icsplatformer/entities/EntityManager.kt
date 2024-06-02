@@ -46,7 +46,7 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
     }
 
     private fun quickSort(arr: MutableList<Entity>, l: Int, r: Int) {
-        if (arr.size == 1 || arr.size == 0) return
+        if (arr.size == 1 || arr.isEmpty()) return
         if (l < r) {
             val pivot = partition(arr, l, r)
 
