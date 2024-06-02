@@ -1,10 +1,13 @@
 package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.image.Image
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
 import josh.icsplatformer.lib.Vec2
+import kotlin.io.path.Path
 import java.awt.geom.Rectangle2D.Double as Rect
 
 /**
@@ -13,10 +16,24 @@ import java.awt.geom.Rectangle2D.Double as Rect
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
+class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var jumped = false
+
+    init {
+        val animation = SpriteAnimation(
+            Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
+            spriteGroup,
+            112.0, 112.0,
+            0, 11,
+            0,
+            20.0,
+            0.0, 0.0,
+            0.0, 40.0
+        )
+        animation.start()
+    }
 
     /**
      * Draws this player on the given GraphicsContext

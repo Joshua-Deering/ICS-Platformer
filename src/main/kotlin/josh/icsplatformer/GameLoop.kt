@@ -1,6 +1,7 @@
 package josh.icsplatformer
 
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.layout.StackPane
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
 import josh.icsplatformer.map.Chunk
@@ -12,13 +13,13 @@ import java.awt.geom.Rectangle2D.Double as Rect
 const val TIME_PER_TICK = 1e9 / 120.0
 const val TIME_PER_RENDER = 1e9 / 60.0
 
-class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyListener) {
+class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyListener, var spriteGroup: StackPane) {
     private lateinit var gameThread: Thread
     private var stopped = false
 
     private var paused: Boolean = false
 
-    private var player = Player(gc, Rect(50.0, 100.0, 20.0, 50.0), keyListener = keyListener)
+    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 20.0, 50.0), keyListener = keyListener)
     private var tileMap = TileMap(
         gc,
         mutableListOf(
@@ -39,7 +40,7 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
             var lastTick = System.nanoTime()
             var lastRender = System.nanoTime()
 
-            while (!stopped) {
+            while (!stopped && !GAME_STOPPED) {
                 val dTick = System.nanoTime() - lastTick
                 val dRender = System.nanoTime() - lastRender
 
@@ -58,6 +59,7 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
 
     fun stop() {
         stopped = true
+        GAME_STOPPED = true
     }
 
     private fun render() {

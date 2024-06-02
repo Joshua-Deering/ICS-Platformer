@@ -2,6 +2,7 @@ package josh.icsplatformer
 
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
+import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.stage.Stage
 import java.io.File
@@ -17,7 +18,8 @@ class MainApp : Application() {
         stage.scene = scene
 
         val keyListener = KeyListener(stage.scene)
-        gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
+        val spriteGroup = fxmlLoader.getController<Controller>().spriteGroup
+        gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener, spriteGroup)
         gameloop.start()
 
         stage.show()

@@ -1,6 +1,11 @@
 package josh.icsplatformer
 
 /*
+ * THREAD GLOBALS
+ */
+var GAME_STOPPED = false
+
+/*
  * DEBUG GLOBALS
  */
 const val DRAW_HITBOXES = false
