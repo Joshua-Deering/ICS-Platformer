@@ -7,6 +7,9 @@ import java.awt.geom.Rectangle2D.Double as Rect
 
 class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: MutableList<Tile>, val hitboxes: MutableList<Rect> = loadHitboxes(tiles)) {
 
+    //secondary constructor for creating a chunk from a string
+    constructor(gc: GraphicsContext, offset: Double, str: String): this(gc, offset, genTiles(str))
+
     init {
         for (hb in hitboxes) {
             hb.x += offset
@@ -36,6 +39,21 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
     }
 
     companion object {
+        //function to generate tiles from a string
+        fun genTiles(str: String): MutableList<Tile> {
+            val tiles = mutableListOf<Tile>()
+            for ((i, s) in str.split("\n").withIndex()) {
+                for ((j, c) in s.split(",").withIndex()) {
+                    val num = c.toInt()
+                    if (num != 0) {
+                        tiles.add(Tile(j, i, num))
+                    }
+                }
+            }
+
+            return tiles
+        }
+
         fun loadHitboxes(tiles: MutableList<Tile>): MutableList<Rect> {
             tiles.sort()
 
@@ -49,6 +67,7 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
                     //the tiles are not vertically adjacent
                     if (tile.y-1 != tiles[i-1].y) {
                         hbs.add(createHitbox(hbStart, tiles[i-1]))
+                        hbStart = tiles[i]
                     }
                 } else {
                     hbs.add(createHitbox(hbStart, tiles[i-1]))

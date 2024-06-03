@@ -5,8 +5,8 @@ import javafx.scene.layout.StackPane
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
 import josh.icsplatformer.map.Chunk
-import josh.icsplatformer.map.Tile
 import josh.icsplatformer.map.TileMap
+import java.io.File
 import java.awt.geom.Rectangle2D.Double as Rect
 
 //nanoseconds per tick/render
@@ -19,17 +19,12 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
 
     private var paused: Boolean = false
 
-    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 20.0, 50.0), keyListener = keyListener)
+    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 20.0, 40.0), keyListener = keyListener)
     private var tileMap = TileMap(
         gc,
         mutableListOf(
-            Chunk(gc, 0.0, mutableListOf(
-                Tile(1, 6, 1)),
-                mutableListOf(Rect(50.0, 300.0, 50.0, 50.0))
-            ),
-            Chunk(gc, 75.0, mutableListOf(
-                Tile(5, 2, 1), Tile(1, 6, 1), Tile(2, 3, 1), Tile(4, 5, 1), Tile(2, 2, 1)),
-//                mutableListOf(Rect(50.0, 300.0, 50.0, 50.0))
+            Chunk(gc, 0.0,
+                File("src/main/resources/tilemaps/chunks.txt").useLines{it -> it.toList().joinToString("\n")}
             )
         )
     )
