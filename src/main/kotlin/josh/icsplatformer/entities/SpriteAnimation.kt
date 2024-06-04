@@ -7,14 +7,18 @@ import javafx.scene.layout.StackPane
 import josh.icsplatformer.GAME_STOPPED
 
 class SpriteAnimation(val img: Image, val spriteGroup: StackPane, val spriteWidth: Double, val spriteHeight: Double,
-                      val startX: Int, val endX: Int, val startY: Int,
-                      val fps: Double, var posX: Double, var posY: Double, val offsetX: Double, val offsetY: Double) {
+                      val startX: Int, val endX: Int, val startY: Int, var posX: Double, var posY: Double, val offsetX: Double, val offsetY: Double,
+                      val fps: Double, val reflect: Boolean) {
     var frame: ImageView = ImageView(img)
     var stopped: Boolean = false
     var curX = startX
 
     init {
         frame.viewport = Rectangle2D(startX * spriteWidth + offsetX, startY * spriteHeight + offsetY, spriteWidth, spriteHeight)
+        if (reflect) {
+            frame.rotationAxis = Y_AXIS
+            frame.rotate = 180.0
+        }
     }
 
     fun start() {
@@ -27,7 +31,6 @@ class SpriteAnimation(val img: Image, val spriteGroup: StackPane, val spriteWidt
                 val dTick = System.nanoTime() - lastTime
 
                 if (dTick > timePerTick) {
-                    println("switching frames")
                     curX++
                     if (curX > endX) curX = startX
                     frame.viewport = Rectangle2D(curX * spriteWidth + offsetX, startY * spriteHeight + offsetY, spriteWidth, spriteHeight)

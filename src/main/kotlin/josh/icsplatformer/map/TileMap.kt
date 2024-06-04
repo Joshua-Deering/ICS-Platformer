@@ -2,11 +2,9 @@ package josh.icsplatformer.map
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import josh.icsplatformer.TILE_HEIGHT
+import josh.icsplatformer.TILE_WIDTH
 import java.awt.geom.Rectangle2D.Double as Rect
-
-//constants for tile dimensions
-const val TILE_WIDTH: Double = 50.0
-const val TILE_HEIGHT: Double = 50.0
 
 class TileMap(private val gc: GraphicsContext, val chunks: MutableList<Chunk>, var scrollVel: Double = -1.0) {
     //x-offset for this tilemap
@@ -19,7 +17,7 @@ class TileMap(private val gc: GraphicsContext, val chunks: MutableList<Chunk>, v
     }
 
     fun update(dt: Double) {
-        //offsetX += scrollVel*dt
+        //do stuff
     }
 
     fun show() {

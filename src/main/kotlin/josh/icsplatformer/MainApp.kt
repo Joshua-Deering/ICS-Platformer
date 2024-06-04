@@ -13,9 +13,10 @@ class MainApp : Application() {
     override fun start(stage: Stage) {
         val f = File("src/main/resources/josh/icsplatformer/main-view.fxml")
         val fxmlLoader = FXMLLoader(f.toURI().toURL())
-        val scene = Scene(fxmlLoader.load(), 750.0, 450.0)
+        val scene = Scene(fxmlLoader.load(), SCREEN_WIDTH, SCREEN_HEIGHT)
         stage.title = "ICS-Platformer"
         stage.scene = scene
+        stage.isResizable = false
 
         val keyListener = KeyListener(stage.scene)
         val spriteGroup = fxmlLoader.getController<Controller>().spriteGroup

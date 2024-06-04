@@ -8,6 +8,7 @@ import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
 import josh.icsplatformer.lib.Vec2
 import kotlin.io.path.Path
+import kotlin.math.min
 import java.awt.geom.Rectangle2D.Double as Rect
 
 /**
@@ -28,9 +29,9 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
             112.0, 112.0,
             0, 11,
             0,
-            20.0,
             0.0, 0.0,
-            0.0, 40.0
+            0.0, 40.0,
+            20.0, false
         )
         animation.start()
     }
@@ -114,6 +115,7 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
                 lastOnGround = System.nanoTime()
                 jumped = false
             } else {
+                vel.y = min(vel.y, 0.0)
                 //collision on bottom side of other
                 pos.setRect(pos.x, other.maxY, pos.width, pos.height)
             }

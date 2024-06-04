@@ -2,7 +2,13 @@ package josh.icsplatformer.map
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import josh.icsplatformer.DRAW_GRID
 import josh.icsplatformer.DRAW_HITBOXES
+import josh.icsplatformer.SCREEN_HEIGHT
+import josh.icsplatformer.SCREEN_WIDTH
+import josh.icsplatformer.TILE_HEIGHT
+import josh.icsplatformer.TILE_WIDTH
+import kotlin.math.ceil
 import java.awt.geom.Rectangle2D.Double as Rect
 
 class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: MutableList<Tile>, val hitboxes: MutableList<Rect> = loadHitboxes(tiles)) {
@@ -29,6 +35,14 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
         for(tile in tiles) {
 //            gc.fillRect(tile.x * TILE_WIDTH + offset, tile.y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
             tile.show(gc, tile.x * TILE_WIDTH + offset, tile.y * TILE_HEIGHT)
+        }
+        if(DRAW_GRID) {
+            gc.stroke = Color.CORNFLOWERBLUE
+            for (i in 0..ceil(SCREEN_WIDTH / TILE_WIDTH).toInt()) {
+                for (j in 0..ceil(SCREEN_HEIGHT / TILE_HEIGHT).toInt()) {
+                    gc.strokeRect(i * TILE_WIDTH + offset, j * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
+                }
+            }
         }
         if(DRAW_HITBOXES) {
             gc.stroke = Color.BLACK
