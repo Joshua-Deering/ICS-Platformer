@@ -11,7 +11,7 @@ var GAME_STOPPED = false
 /*
  * DEBUG GLOBALS
  */
-const val DRAW_HITBOXES = false
+const val DRAW_HITBOXES = true
 const val DRAW_GRID = false
 
 /*

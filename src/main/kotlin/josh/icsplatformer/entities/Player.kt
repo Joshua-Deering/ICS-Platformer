@@ -4,13 +4,13 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import josh.icsplatformer.DRAW_HITBOXES
 import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
 import josh.icsplatformer.lib.Vec2
 import kotlin.io.path.Path
 import kotlin.math.min
 import java.awt.geom.Rectangle2D.Double as Rect
+import josh.icsplatformer.DRAW_HITBOXES
 
 /**
  * Main Player class
@@ -27,23 +27,19 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
     private val animations: List<SpriteAnimation> = listOf(
         SpriteAnimation(
             Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
-            spriteGroup,
-            112.0, 112.0,
+            30.0, 36.0,
             0, 11,
-            0,
+            0, 1,
             0.0, 0.0,
-            0.0, 40.0,
             20.0, false
         ),
         SpriteAnimation(
             Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
-            spriteGroup,
-            112.0, 112.0,
+            30.0, 36.0,
             0, 11,
-            0,
+            0, 1,
             0.0, 0.0,
-            0.0, 40.0,
-            20.0, true
+            20.0, false
         ),
     )
 
@@ -55,6 +51,7 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
             gc.fill = Color.LIGHTGREEN
             gc.strokeRect(pos.x, pos.y, pos.width, pos.height)
         }
+        animations[curAnimation].show(gc, pos.x, pos.y, pos.width, pos.height)
     }
 
     /**
@@ -108,12 +105,9 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
         val newAnim = getAnimationState()
         if (curAnimation != newAnim) {
             animations[curAnimation].reset()
-            animations[newAnim].setPos(pos.x - 2*pos.width - 5, pos.centerY - pos.height)
-            animations[newAnim].start()
             curAnimation = newAnim
         }
-        animations[curAnimation].setPos(pos.x - 2*pos.width - 5, pos.centerY - pos.height)
-        animations[curAnimation].setCurFrame()
+        animations[curAnimation].update()
 
         //reset state
         onGround = false
@@ -125,14 +119,14 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
     }
 
     fun getAnimationState(): Int {
-        if (!onGround) { //is in the air
-            return if (vel.y > 0) { //jumping
+        return if (!onGround) { //is in the air
+            if (vel.y > 0) { //jumping
                 0
             } else { //falling
                 0
             }
         } else {
-            return if (vel.x > 0) {
+            if (vel.x > 0) {
                 1
             } else {
                 0

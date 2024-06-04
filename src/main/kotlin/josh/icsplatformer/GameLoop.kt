@@ -20,7 +20,7 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
 
     private var paused: Boolean = false
 
-    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 20.0, 40.0), keyListener = keyListener)
+    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener)
     private var tileMap = TileMap(
         gc,
         ChunkLoader.loadChunksFromFile(gc, "src/resources/tilemaps/chunks.txt")
