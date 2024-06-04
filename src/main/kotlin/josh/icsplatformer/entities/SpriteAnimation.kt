@@ -4,6 +4,7 @@ import javafx.geometry.Rectangle2D
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.StackPane
+import javafx.scene.transform.Rotate.Y_AXIS
 import josh.icsplatformer.GAME_STOPPED
 
 class SpriteAnimation(val img: Image, val spriteGroup: StackPane, val spriteWidth: Double, val spriteHeight: Double,
