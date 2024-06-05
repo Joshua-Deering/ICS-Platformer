@@ -2,7 +2,6 @@ package josh.icsplatformer
 
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 
 class KeyListener(scene: Scene) {
     private var keysDown: MutableSet<KeyCode> = mutableSetOf()

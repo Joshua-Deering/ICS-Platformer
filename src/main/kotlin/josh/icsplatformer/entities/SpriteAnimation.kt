@@ -16,7 +16,9 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
             curX * spriteWidth + offsetX,
             curY * spriteHeight + offsetY,
             spriteWidth, spriteHeight,
-            x, y, width, height)
+            if(reflect) {x + spriteWidth} else {x}, y,
+            if(reflect) {-width} else {width}, height
+        )
     }
 
     fun update() {

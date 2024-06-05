@@ -5,7 +5,7 @@ import java.io.File
 
 object ChunkLoader {
     fun loadChunksFromFile(gc: GraphicsContext, file: String): MutableList<Chunk> {
-        val lines = mutableListOf("") + File("src/main/resources/tilemaps/chunks.txt").useLines{it -> it.toList()}
+        val lines = mutableListOf("") + File(file).useLines{it -> it.toList()}
         val chunks = mutableListOf<Chunk>()
         val indexes = lines.mapIndexedNotNull{i, elem -> i.takeIf{elem == ""}}.toMutableList()
         indexes.add(lines.lastIndex)

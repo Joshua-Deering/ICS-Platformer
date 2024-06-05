@@ -1,15 +1,11 @@
 package josh.icsplatformer.map
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.paint.Color
 import josh.icsplatformer.TILE_HEIGHT
 import josh.icsplatformer.TILE_WIDTH
 import java.awt.geom.Rectangle2D.Double as Rect
 
-class TileMap(private val gc: GraphicsContext, val chunks: MutableList<Chunk>, var scrollVel: Double = -1.0) {
-    //x-offset for this tilemap
-    private var offsetX: Double = 0.0
-
+class TileMap(val chunks: MutableList<Chunk>, var scrollVel: Double = -1.0) {
     init {
         println("")
         //TODO("change this to use instances of chunks instead of one tilemap")

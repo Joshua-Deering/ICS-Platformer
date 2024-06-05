@@ -2,7 +2,6 @@ package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
@@ -18,7 +17,7 @@ import josh.icsplatformer.DRAW_HITBOXES
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
+class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var jumped = false
@@ -39,7 +38,7 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
             0, 11,
             0, 1,
             0.0, 0.0,
-            20.0, false
+            20.0, true
         ),
     )
 
@@ -138,7 +137,7 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
         val collisionRect = pos.createIntersection(other)
 
         //collision on top or bottom of other
-        if (collisionRect.width + 5 >= collisionRect.height) {
+        if (collisionRect.width + 3 >= collisionRect.height) {
             //collision on top side of other
             if (collisionRect.centerY > pos.centerY) {
                 if (collisionRect.width >= collisionRect.height) {
