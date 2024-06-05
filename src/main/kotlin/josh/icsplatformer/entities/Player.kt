@@ -40,6 +40,22 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
             0.0, 0.0,
             20.0, true
         ),
+        SpriteAnimation(
+            Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
+            30.0, 36.0,
+            0, 3,
+            4, 4,
+            0.0, 0.0,
+            10.0, false
+        ),
+        SpriteAnimation(
+            Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
+            30.0, 36.0,
+            0, 3,
+            4, 4,
+            0.0, 0.0,
+            10.0, true
+        ),
     )
 
     /**
@@ -119,10 +135,10 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
 
     fun getAnimationState(): Int {
         return if (!onGround) { //is in the air
-            if (vel.y > 0) { //jumping
-                0
-            } else { //falling
-                0
+            if (vel.x > 0) {
+                3
+            } else {
+                2
             }
         } else {
             if (vel.x > 0) {
