@@ -5,15 +5,22 @@ import josh.icsplatformer.TILE_HEIGHT
 import josh.icsplatformer.TILE_WIDTH
 import java.awt.geom.Rectangle2D.Double as Rect
 
-class TileMap(val chunks: MutableList<Chunk>, var scrollVel: Double = -1.0) {
-    init {
-        println("")
-        //TODO("change this to use instances of chunks instead of one tilemap")
-        //TODO("add automatic generation of hitboxes based on tiles on map")
-    }
+class TileMap(val chunkLoader: ChunkLoader, val chunks: MutableList<Chunk>, var scrollVel: Double) {
+    var scrollDist = 0.0
 
     fun update(dt: Double) {
-        //do stuff
+        scrollDist += scrollVel * dt
+        var chunksToAdd = mutableListOf<Chunk>()
+        var chunksToRemove = mutableListOf<Chunk>()
+        for (c in chunks) {
+            //chunk.move returns a boolean of whether it is off the screen
+            if(c.move(scrollVel * dt)) {
+                chunksToRemove.add(c)
+                chunksToAdd.add(chunkLoader.genChunk(scrollDist).clone())
+            }
+        }
+        chunks.removeAll(chunksToRemove)
+        chunks.addAll(chunksToAdd)
     }
 
     fun show() {

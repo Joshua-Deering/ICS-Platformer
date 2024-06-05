@@ -14,12 +14,18 @@ const val TIME_PER_RENDER = 1e9 / 60.0
 class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyListener) {
     private lateinit var gameThread: Thread
     private var stopped = false
-
     private var paused: Boolean = false
 
-    private var player = Player(gc, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener)
-    private var tileMap = TileMap(ChunkLoader.loadChunksFromFile(gc, "src/main/resources/tilemaps/chunks.txt"))
-    private var entityManager = EntityManager(mutableListOf(player), tileMap)
+    var chunkLoader = ChunkLoader()
+    private var player = Player(gc, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener, tileMapScroll = -40.0)
+    private var tileMap: TileMap
+    private var entityManager: EntityManager
+
+    init {
+        chunkLoader.loadChunksFromFile(gc, "src/main/resources/tilemaps/chunks.txt")
+        tileMap = TileMap(chunkLoader, chunkLoader.getChunks(0, 1), -40.0)
+        entityManager = EntityManager(mutableListOf(player), tileMap)
+    }
 
     fun start() {
         gameThread = Thread {

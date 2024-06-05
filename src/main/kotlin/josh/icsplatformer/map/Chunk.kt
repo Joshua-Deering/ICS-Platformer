@@ -11,7 +11,7 @@ import josh.icsplatformer.TILE_WIDTH
 import kotlin.math.ceil
 import java.awt.geom.Rectangle2D.Double as Rect
 
-class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: MutableList<Tile>, val hitboxes: MutableList<Rect> = loadHitboxes(tiles)) {
+class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: MutableList<Tile>, val hitboxes: MutableList<Rect> = loadHitboxes(tiles)): Cloneable {
 
     //secondary constructor for creating a chunk from a string
     constructor(gc: GraphicsContext, offset: Double, str: String): this(gc, offset, genTiles(str))
@@ -22,18 +22,21 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
         }
     }
 
-    fun move(x: Double) {
+    fun move(x: Double): Boolean {
         offset += x
 
         for (hb in hitboxes) {
             hb.x += x
         }
+
+        if(offset < -SCREEN_WIDTH) {
+            return true
+        }
+        return false
     }
 
     fun show() {
-        //gc.fill = Color.BLUE
         for(tile in tiles) {
-//            gc.fillRect(tile.x * TILE_WIDTH + offset, tile.y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
             tile.show(gc, tile.x * TILE_WIDTH + offset, tile.y * TILE_HEIGHT)
         }
         if(DRAW_GRID) {
@@ -51,6 +54,8 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
             }
         }
     }
+
+    public override fun clone() = Chunk(gc, offset, tiles.toMutableList())
 
     companion object {
         //function to generate tiles from a string

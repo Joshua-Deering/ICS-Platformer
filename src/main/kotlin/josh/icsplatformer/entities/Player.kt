@@ -17,7 +17,7 @@ import josh.icsplatformer.DRAW_HITBOXES
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
+class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener, val tileMapScroll: Double) : Entity(gc, pos) {
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var jumped = false
@@ -91,7 +91,7 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
         }
 
         //displacement for this frame
-        val d = Vec2(0.0, 0.0)
+        val d = Vec2(tileMapScroll, 0.0)
 
         if (keyListener.keyDown("W")) {
             if (onGround && !jumped) {
