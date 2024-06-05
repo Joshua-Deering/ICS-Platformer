@@ -78,19 +78,19 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
 
             var hbs = mutableListOf<Rect>()
             //find largest vertical hitboxes that fill all of the boxes
-            var curX = tiles[0].x
+            var curY = tiles[0].y
             var hbStart: Tile = tiles[0]
             for (i in 1..tiles.lastIndex) {
                 val tile = tiles[i]
-                if (tile.x == curX && hbStart.x == curX) {
+                if (tile.y == curY && hbStart.y == curY) {
                     //the tiles are not vertically adjacent
-                    if (tile.y-1 != tiles[i-1].y) {
+                    if (tile.x-1 != tiles[i-1].x) {
                         hbs.add(createHitbox(hbStart, tiles[i-1]))
                         hbStart = tiles[i]
                     }
                 } else {
                     hbs.add(createHitbox(hbStart, tiles[i-1]))
-                    curX = tile.x
+                    curY = tile.y
                     hbStart = tile
                 }
             }
@@ -100,7 +100,7 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
         }
 
         fun createHitbox(start: Tile, end: Tile): Rect {
-            return Rect(start.x * TILE_WIDTH, start.y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT * (end.y - start.y+1))
+            return Rect(start.x * TILE_WIDTH, start.y * TILE_HEIGHT, TILE_WIDTH * (end.x - start.x+1), TILE_HEIGHT * (end.y - start.y+1))
         }
     }
 }

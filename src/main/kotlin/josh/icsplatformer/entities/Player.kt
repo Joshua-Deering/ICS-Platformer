@@ -2,6 +2,7 @@ package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
+import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
@@ -10,6 +11,9 @@ import kotlin.io.path.Path
 import kotlin.math.min
 import java.awt.geom.Rectangle2D.Double as Rect
 import josh.icsplatformer.DRAW_HITBOXES
+import josh.icsplatformer.map.TileMap
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Main Player class
@@ -17,10 +21,19 @@ import josh.icsplatformer.DRAW_HITBOXES
  * @property gc Graphics context to draw to
  * @property pos This players Hitbox
  */
-class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener, val tileMapScroll: Double) : Entity(gc, pos) {
+class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener, val tileMapScroll: Double) : Entity(gc, pos) {
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var jumped = false
+
+    //grappling variables
+    private var grappling = false
+    private var throwingGrapple = false
+    private var grapplePos = Vec2(0.0, 0.0)
+    private var lastGrapple = System.nanoTime()
+    private var grappleVel = Vec2(0.0, 0.0)
+    private val grappleSpeed = 20.0
+    private var grappleTargetPos = Vec2(0.0, 0.0)
 
     private var curAnimation = 0
     private val animations: List<SpriteAnimation> = listOf(
@@ -67,6 +80,13 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
             gc.strokeRect(pos.x, pos.y, pos.width, pos.height)
         }
         animations[curAnimation].show(gc, pos.x, pos.y, pos.width, pos.height)
+
+        if (grappling) {
+            gc.stroke = Color.BLUE
+            gc.strokeLine(pos.x, pos.y, grapplePos.x, grapplePos.y)
+            gc.fill = Color.RED
+            gc.fillRect(grapplePos.x, grapplePos.y, 5.0, 5.0)
+        }
     }
 
     /**
@@ -100,18 +120,53 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
             }
         }
         if (keyListener.keyDown("D")) {
-            vel.x += 13.0
+            vel.x += if (onGround) 13.0 else { 6.0 }
         }
         if (keyListener.keyDown("A")) {
-            vel.x -= 13.0
+            vel.x -= if (onGround) 13.0 else { 6.0 }
         }
 
-        //limit velocity
-        vel.clamp(Vec2(-200.0, -400.0), Vec2(200.0, 400.0))
+        if(keyListener.keyDown(KeyCode.SPACE.toString())) {
+            if (throwingGrapple) {
+                grapplePos.plusAssign(grappleVel)
+                if (checkGrappleCollisions()) {
+                    throwingGrapple = false
+                    lastGrapple = System.nanoTime()
+                }
+            } else if ((System.nanoTime() - lastGrapple) / 1e9 > 0.1) {
+                grappleTargetPos = Vec2(keyListener.mouseX, keyListener.mouseY)
+                val dirVec = Vec2(grappleTargetPos.x - pos.x, grappleTargetPos.y - pos.y)
+                dirVec.scalarMultAssign(1.0/sqrt((grappleTargetPos.x - pos.x).pow(2) + (grappleTargetPos.y - pos.y).pow(2)))
+                throwingGrapple = true
+                grappling = true
+                grapplePos = Vec2(pos.x, pos.y)
+                grappleVel = dirVec.scalarMult(grappleSpeed)
+            } else {
+                grappleTargetPos.x += tileMapScroll * dt
+                lastGrapple = System.nanoTime()
+                grappling = true
+                throwingGrapple = false
+                val dirVec = Vec2(grappleTargetPos.x - pos.x, grappleTargetPos.y - pos.y)
+                dirVec.scalarMultAssign(1.0/sqrt((grappleTargetPos.x - pos.x).pow(2) + (grappleTargetPos.y - pos.y).pow(2)))
+                dirVec.scalarMultAssign(50.0)
+                dirVec.y *= -0.75
+                vel.plusAssign(dirVec)
+            }
+        } else {
+            grappling = false
+        }
+
+        if (onGround) {
+            //limit velocity on ground
+            vel.clamp(Vec2(-200.0, -400.0), Vec2(200.0, 400.0))
+        } else {
+            //limit velocity in air
+            vel.clamp(Vec2(-400.0, -400.0), Vec2(400.0, 400.0))
+        }
 
         //add the velocity to the displacement
         d.plusAssign(vel)
-        d.scalarMult(dt)
+        d.scalarMultAssign(dt)
 
         //change position of player to reflect velocity changes
         pos.setRect(pos.x + d.x, pos.y - d.y, pos.width, pos.height)
@@ -147,6 +202,16 @@ class Player(gc: GraphicsContext, pos: Rect, private var vel: Vec2 = Vec2(), pri
                 0
             }
         }
+    }
+
+    fun checkGrappleCollisions(): Boolean {
+        for (hb in tileMap.getHitboxes()) {
+            if (hb.intersectsLine(pos.x, pos.y, grapplePos.x, grapplePos.y)) {
+                grappleTargetPos = grapplePos
+                return true
+            }
+        }
+        return false
     }
 
     override fun collideWithMap(other: Rect) {

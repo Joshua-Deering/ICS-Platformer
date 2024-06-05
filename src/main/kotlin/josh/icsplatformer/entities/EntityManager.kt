@@ -55,13 +55,12 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun partition(arr: MutableList<Entity>, l: Int, r: Int): Int {
 
         val pivot = arr[r].pos.minX
         var i = l-1
 
-        for (j in l..<r) {
+        for (j in l..r-1) {
             if (arr[j].pos.minX < pivot) {
                 i++
                 swap(arr, i, j)

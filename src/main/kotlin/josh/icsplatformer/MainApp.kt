@@ -16,6 +16,7 @@ class MainApp : Application() {
         stage.title = "ICS-Platformer"
         stage.scene = scene
         stage.isResizable = false
+        stage.requestFocus()
 
         val keyListener = KeyListener(stage.scene)
         gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)

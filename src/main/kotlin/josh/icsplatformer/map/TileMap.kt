@@ -37,7 +37,7 @@ class TileMap(val chunkLoader: ChunkLoader, val chunks: MutableList<Chunk>, var 
 }
 
 data class Tile(val x: Int, val y: Int, val type: Int) : Comparable<Tile> {
-    override fun compareTo(other: Tile) = compareValuesBy(this, other, {it.x}, {it.y})
+    override fun compareTo(other: Tile) = compareValuesBy(this, other, {it.y}, {it.x})
     fun show(gc: GraphicsContext, posx: Double, posy: Double) {
         gc.drawImage(MapTextures.textures[0], posx, posy, TILE_WIDTH, TILE_HEIGHT)
     }

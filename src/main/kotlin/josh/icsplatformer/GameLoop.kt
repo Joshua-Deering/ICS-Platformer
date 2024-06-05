@@ -17,13 +17,14 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
     private var paused: Boolean = false
 
     var chunkLoader = ChunkLoader()
-    private var player = Player(gc, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener, tileMapScroll = -40.0)
+    private var player: Player
     private var tileMap: TileMap
     private var entityManager: EntityManager
 
     init {
         chunkLoader.loadChunksFromFile(gc, "src/main/resources/tilemaps/chunks.txt")
         tileMap = TileMap(chunkLoader, chunkLoader.getChunks(0, 1), -40.0)
+        player = Player(gc, tileMap, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener, tileMapScroll = -40.0)
         entityManager = EntityManager(mutableListOf(player), tileMap)
     }
 

@@ -5,7 +5,15 @@ import javafx.scene.input.KeyCode
 
 class KeyListener(scene: Scene) {
     private var keysDown: MutableSet<KeyCode> = mutableSetOf()
+    var mouseX = 0.0
+    var mouseY = 0.0
+
     init {
+        scene.setOnMouseMoved { m ->
+            mouseX = m.x
+            mouseY = m.y
+        }
+
         scene.setOnKeyPressed { key ->
             keysDown.add(key.code)
         }
