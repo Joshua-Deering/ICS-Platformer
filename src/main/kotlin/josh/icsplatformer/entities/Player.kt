@@ -131,9 +131,9 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
                 grapplePos.plusAssign(grappleVel)
                 if (checkGrappleCollisions()) {
                     throwingGrapple = false
-                    lastGrapple = System.nanoTime()
                 }
-            } else if ((System.nanoTime() - lastGrapple) / 1e9 > 0.1) {
+                lastGrapple = System.nanoTime()
+            } else if ((System.nanoTime() - lastGrapple) / 1e9 > 0.3) {
                 grappleTargetPos = Vec2(keyListener.mouseX, keyListener.mouseY)
                 val dirVec = Vec2(grappleTargetPos.x - pos.x, grappleTargetPos.y - pos.y)
                 dirVec.scalarMultAssign(1.0/sqrt((grappleTargetPos.x - pos.x).pow(2) + (grappleTargetPos.y - pos.y).pow(2)))
@@ -141,7 +141,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
                 grappling = true
                 grapplePos = Vec2(pos.x, pos.y)
                 grappleVel = dirVec.scalarMult(grappleSpeed)
-            } else {
+            } else if (grappling) {
                 grappleTargetPos.x += tileMapScroll * dt
                 lastGrapple = System.nanoTime()
                 grappling = true
@@ -149,10 +149,14 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
                 val dirVec = Vec2(grappleTargetPos.x - pos.x, grappleTargetPos.y - pos.y)
                 dirVec.scalarMultAssign(1.0/sqrt((grappleTargetPos.x - pos.x).pow(2) + (grappleTargetPos.y - pos.y).pow(2)))
                 dirVec.scalarMultAssign(50.0)
-                dirVec.y *= -0.75
+                if(vel.y < 0) {
+                    dirVec.y *= -0.75
+                } else {
+                    dirVec.y *= -0.4
+                }
                 vel.plusAssign(dirVec)
             }
-        } else {
+        } else if(grappling) {
             grappling = false
         }
 
