@@ -5,6 +5,7 @@ import javafx.scene.layout.StackPane
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
 import josh.icsplatformer.map.Chunk
+import josh.icsplatformer.map.ChunkLoader
 import josh.icsplatformer.map.TileMap
 import java.io.File
 import java.awt.geom.Rectangle2D.Double as Rect
@@ -19,14 +20,10 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
 
     private var paused: Boolean = false
 
-    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 20.0, 40.0), keyListener = keyListener)
+    private var player = Player(gc, spriteGroup, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener)
     private var tileMap = TileMap(
         gc,
-        mutableListOf(
-            Chunk(gc, 0.0,
-                File("src/main/resources/tilemaps/chunks.txt").useLines{it -> it.toList().joinToString("\n")}
-            )
-        )
+        ChunkLoader.loadChunksFromFile(gc, "src/resources/tilemaps/chunks.txt")
     )
     private var entityManager = EntityManager(mutableListOf(player), tileMap)
 

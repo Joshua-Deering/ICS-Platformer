@@ -10,6 +10,7 @@ import josh.icsplatformer.lib.Vec2
 import kotlin.io.path.Path
 import kotlin.math.min
 import java.awt.geom.Rectangle2D.Double as Rect
+import josh.icsplatformer.DRAW_HITBOXES
 
 /**
  * Main Player class
@@ -22,27 +23,35 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
     private var lastOnGround: Long = System.nanoTime()
     private var jumped = false
 
-    init {
-        val animation = SpriteAnimation(
+    private var curAnimation = 0
+    private val animations: List<SpriteAnimation> = listOf(
+        SpriteAnimation(
             Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
-            spriteGroup,
-            112.0, 112.0,
+            30.0, 36.0,
             0, 11,
-            0,
+            0, 1,
             0.0, 0.0,
-            0.0, 40.0,
             20.0, false
-        )
-        animation.start()
-    }
+        ),
+        SpriteAnimation(
+            Image(Path("src/main/resources/sprites/red-hood-sheet.png").toAbsolutePath().toUri().toURL().toString()),
+            30.0, 36.0,
+            0, 11,
+            0, 1,
+            0.0, 0.0,
+            20.0, false
+        ),
+    )
 
     /**
      * Draws this player on the given GraphicsContext
      */
     override fun show() {
-        gc.fill = Color.RED
-        gc.fillRect(pos.minX, pos.minY, pos.getWidth(), pos.getHeight())
-        //TODO("sprite/sprite animation")
+        if (DRAW_HITBOXES) {
+            gc.fill = Color.LIGHTGREEN
+            gc.strokeRect(pos.x, pos.y, pos.width, pos.height)
+        }
+        animations[curAnimation].show(gc, pos.x, pos.y, pos.width, pos.height)
     }
 
     /**
@@ -83,7 +92,7 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
         }
 
         //limit velocity
-        vel.clamp(Vec2(-150.0, -300.0), Vec2(150.0, 300.0))
+        vel.clamp(Vec2(-200.0, -400.0), Vec2(200.0, 400.0))
 
         //add the velocity to the displacement
         d.plusAssign(vel)
@@ -91,6 +100,14 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
 
         //change position of player to reflect velocity changes
         pos.setRect(pos.x + d.x, pos.y - d.y, pos.width, pos.height)
+
+        //change state
+        val newAnim = getAnimationState()
+        if (curAnimation != newAnim) {
+            animations[curAnimation].reset()
+            curAnimation = newAnim
+        }
+        animations[curAnimation].update()
 
         //reset state
         onGround = false
@@ -101,6 +118,22 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
         //TODO("add logic for entity-entity collision")
     }
 
+    fun getAnimationState(): Int {
+        return if (!onGround) { //is in the air
+            if (vel.y > 0) { //jumping
+                0
+            } else { //falling
+                0
+            }
+        } else {
+            if (vel.x > 0) {
+                1
+            } else {
+                0
+            }
+        }
+    }
+
     override fun collideWithMap(other: Rect) {
         val collisionRect = pos.createIntersection(other)
 
@@ -108,12 +141,14 @@ class Player(gc: GraphicsContext, spriteGroup: StackPane, pos: Rect, private var
         if (collisionRect.width + 5 >= collisionRect.height) {
             //collision on top side of other
             if (collisionRect.centerY > pos.centerY) {
-                vel.y = 0.0
+                if (collisionRect.width >= collisionRect.height) {
+                    //set player state
+                    onGround = true
+                    lastOnGround = System.nanoTime()
+                    jumped = false
+                    vel.y = 0.0
+                }
                 pos.setRect(pos.x, other.minY - pos.height, pos.width, pos.height)
-                //set player state
-                onGround = true
-                lastOnGround = System.nanoTime()
-                jumped = false
             } else {
                 vel.y = min(vel.y, 0.0)
                 //collision on bottom side of other
