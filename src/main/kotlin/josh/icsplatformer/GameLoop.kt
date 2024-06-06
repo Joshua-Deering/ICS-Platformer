@@ -3,6 +3,7 @@ package josh.icsplatformer
 import javafx.scene.canvas.GraphicsContext
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
+import josh.icsplatformer.map.BackgroundRenderer
 import josh.icsplatformer.map.ChunkLoader
 import josh.icsplatformer.map.TileMap
 import java.awt.geom.Rectangle2D.Double as Rect
@@ -20,6 +21,7 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
     private var player: Player
     private var tileMap: TileMap
     private var entityManager: EntityManager
+    private var backgroundRenderer = BackgroundRenderer(10.0)
 
     init {
         chunkLoader.loadChunksFromFile(gc, "src/main/resources/tilemaps/chunks.txt")
@@ -57,6 +59,7 @@ class GameLoop(private val gc: GraphicsContext, private val keyListener: KeyList
 
     private fun render() {
         gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
+        backgroundRenderer.showBackground(gc, 0, 10)
         //RENDER
         tileMap.show()
         entityManager.show()
