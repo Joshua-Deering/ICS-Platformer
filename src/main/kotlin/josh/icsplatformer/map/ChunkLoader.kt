@@ -28,7 +28,7 @@ class ChunkLoader {
     }
 
     fun genChunk(scrollDist: Double): Chunk {
-        return possibleChunks[1].clone()
+        return possibleChunks[2].clone()
     }
 
     companion object {

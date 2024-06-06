@@ -17,6 +17,7 @@ class MainApp : Application() {
         stage.scene = scene
         stage.isResizable = false
         stage.requestFocus()
+        fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D.isImageSmoothing = false
 
         val keyListener = KeyListener(stage.scene)
         gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
