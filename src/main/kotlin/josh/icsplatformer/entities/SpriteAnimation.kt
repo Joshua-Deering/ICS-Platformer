@@ -5,16 +5,17 @@ import javafx.scene.image.Image
 
 class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight: Double,
                       val startX: Int, val endX: Int, val startY: Int, val endY: Int, val offsetX: Double, val offsetY: Double,
-                      val fps: Double, val reflect: Boolean) {
+                      val fps: Double, val reflect: Boolean, val playOnce: Boolean) {
     var curX = startX
     var curY = startY
     val timePerTick = 1e9 / fps
     var lastTime = System.nanoTime()
+    var finished = false
 
     fun show(gc: GraphicsContext, x: Double, y: Double, width: Double, height: Double) {
         gc.drawImage(img,
-            curX * spriteWidth + offsetX,
-            curY * spriteHeight + offsetY,
+            if(!finished && !playOnce) {curX} else {endX} * spriteWidth + offsetX,
+            if(!finished && !playOnce) {curY} else {endY} * spriteHeight + offsetY,
             spriteWidth, spriteHeight,
             if(reflect) {x + spriteWidth} else {x}, y,
             if(reflect) {-width} else {width}, height
@@ -28,7 +29,10 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
             if (curX > endX) {
                 curX = startX
                 curY++
-                if (curY > endY) curY = startY
+                if (curY > endY) {
+                    curY = startY
+                    finished = true
+                }
             }
             lastTime = System.nanoTime()
         }
