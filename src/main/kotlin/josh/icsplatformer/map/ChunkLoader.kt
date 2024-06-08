@@ -7,16 +7,24 @@ class ChunkLoader {
     lateinit var possibleChunks: MutableList<Chunk>
 
     fun loadChunksFromFile(gc: GraphicsContext, file: String) {
-        val lines = mutableListOf("") + File(file).useLines{it -> it.toList()}
+        val lines = File(file).useLines{it -> it.toList()}
         possibleChunks = mutableListOf()
-        val indexes = lines.mapIndexedNotNull{i, elem -> i.takeIf{elem == ""}}.toMutableList()
-        indexes.add(lines.lastIndex)
-
-        for(i in 0..indexes.lastIndex-1) {
-            val chunkLines = lines.subList(indexes[i], indexes[i+1])
-            val offset = chunkLines[1].toDouble()
-            possibleChunks.add(Chunk(gc, offset, chunkLines.subList(2, chunkLines.size).joinToString("\n")))
+        var offset = 0.0
+        var chunkLines = mutableListOf<String>()
+        for (l in lines) {
+            if (l == "") continue
+            val split = l.split(",")
+            if (split.size == 1) {
+                if(chunkLines.size > 1) {
+                    possibleChunks.add(createChunkFromStrings(gc, offset, chunkLines))
+                    chunkLines = mutableListOf()
+                }
+                offset = l.toDouble()
+                continue
+            }
+            chunkLines.add(l)
         }
+        possibleChunks.add(createChunkFromStrings(gc, offset, chunkLines))
     }
 
     fun getChunks(startIdx: Int, endIdx: Int): MutableList<Chunk> {
@@ -31,7 +39,18 @@ class ChunkLoader {
         return possibleChunks[2].clone()
     }
 
-    companion object {
+    fun createChunkFromStrings(gc: GraphicsContext, offset: Double, lines: List<String>): Chunk {
+        var tiles = mutableListOf<Tile>()
+        for(i in 0..lines.lastIndex) {
+            val lSplit = lines[i].split(",")
+            for (j in 0..lSplit.lastIndex) {
+                if (lSplit[i] == "") continue
+                val type = lSplit[j].toInt()
+                if (type == 0) continue
+                tiles.add(Tile(j, i, type))
+            }
+        }
 
+        return Chunk(gc, offset, tiles)
     }
 }

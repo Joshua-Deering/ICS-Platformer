@@ -14,8 +14,8 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
 
     fun show(gc: GraphicsContext, x: Double, y: Double, width: Double, height: Double) {
         gc.drawImage(img,
-            if(!finished && !playOnce) {curX} else {endX} * spriteWidth + offsetX,
-            if(!finished && !playOnce) {curY} else {endY} * spriteHeight + offsetY,
+            if(!finished) {curX} else {endX} * spriteWidth + offsetX,
+            if(!finished) {curY} else {endY} * spriteHeight + offsetY,
             spriteWidth, spriteHeight,
             if(reflect) {x + spriteWidth} else {x}, y,
             if(reflect) {-width} else {width}, height
@@ -31,7 +31,7 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
                 curY++
                 if (curY > endY) {
                     curY = startY
-                    finished = true
+                    if(playOnce) finished = true
                 }
             }
             lastTime = System.nanoTime()
@@ -41,5 +41,6 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
     fun reset() {
         curX = startX
         curY = startY
+        finished = false
     }
 }

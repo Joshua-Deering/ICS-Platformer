@@ -25,6 +25,9 @@ import kotlin.math.sqrt
 class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener, val tileMapScroll: Double) : Entity(gc, pos) {
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
+    private var timeSinceOnGround: Double = 0.0
+    private var lastInAir = System.nanoTime()
+    private var justLanded: Boolean = false
     private var jumped = false
     private var lastDir = false //left false, right true
 
@@ -45,7 +48,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
 
     private var curAnimation = 0
     private val animations: List<SpriteAnimation> = listOf(
-        SpriteAnimation( //idle-left
+        SpriteAnimation( //idle-left: 0
             Image(Path("src/main/resources/sprites/red-hood-idle.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 8,
@@ -53,7 +56,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             15.0, false, false
         ),
-        SpriteAnimation( //idle-right
+        SpriteAnimation( //idle-right: 1
             Image(Path("src/main/resources/sprites/red-hood-idle.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 8,
@@ -61,7 +64,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             15.0, true, false
         ),
-        SpriteAnimation( //running-left
+        SpriteAnimation( //running-left: 2
             Image(Path("src/main/resources/sprites/red-hood-running.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 24,
@@ -69,7 +72,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, true, false
         ),
-        SpriteAnimation( //running-right
+        SpriteAnimation( //running-right: 3
             Image(Path("src/main/resources/sprites/red-hood-running.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 24,
@@ -77,7 +80,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, false
         ),
-        SpriteAnimation( //jumping-left
+        SpriteAnimation( //jumping-left: 4
             Image(Path("src/main/resources/sprites/red-hood-jumping.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 11,
@@ -85,7 +88,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, false
         ),
-        SpriteAnimation( //jumping-right
+        SpriteAnimation( //jumping-right: 5
             Image(Path("src/main/resources/sprites/red-hood-jumping.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 11,
@@ -93,7 +96,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, true, false
         ),
-        SpriteAnimation( //falling-left
+        SpriteAnimation( //falling-left: 6
             Image(Path("src/main/resources/sprites/red-hood-falling.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 2,
@@ -101,7 +104,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, false
         ),
-        SpriteAnimation( //falling-right
+        SpriteAnimation( //falling-right: 7
             Image(Path("src/main/resources/sprites/red-hood-falling.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 2,
@@ -109,7 +112,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, true, false
         ),
-        SpriteAnimation( //ground-to-grapple left
+        SpriteAnimation( //ground-to-grapple left: 8
             Image(Path("src/main/resources/sprites/red-hood-ground-to-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 4,
@@ -117,7 +120,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, true
         ),
-        SpriteAnimation( //ground-to-grapple right
+        SpriteAnimation( //ground-to-grapple right: 9
             Image(Path("src/main/resources/sprites/red-hood-ground-to-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 4,
@@ -125,7 +128,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, true, true
         ),
-        SpriteAnimation( //air-to-grapple left
+        SpriteAnimation( //air-to-grapple left: 10
             Image(Path("src/main/resources/sprites/red-hood-falling-to-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 3,
@@ -133,7 +136,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, true
         ),
-        SpriteAnimation( //air-to-grapple right
+        SpriteAnimation( //air-to-grapple right: 11
             Image(Path("src/main/resources/sprites/red-hood-falling-to-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 3,
@@ -141,7 +144,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, true, true
         ),
-        SpriteAnimation( //grappling left
+        SpriteAnimation( //grappling left: 12
             Image(Path("src/main/resources/sprites/red-hood-in-air-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 2,
@@ -149,13 +152,29 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             20.0, false, false
         ),
-        SpriteAnimation( //grappling right
+        SpriteAnimation( //grappling right: 13
             Image(Path("src/main/resources/sprites/red-hood-in-air-grapple.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
             0, 2,
             0, 0,
             0.0, 0.0,
             20.0, true, false
+        ),
+        SpriteAnimation( //landing left: 14
+            Image(Path("src/main/resources/sprites/red-hood-landing.png").toAbsolutePath().toUri().toURL().toString()),
+            50.0, 40.0,
+            0, 3,
+            0, 0,
+            0.0, 0.0,
+            12.0, false, true
+        ),
+        SpriteAnimation( //landing right: 15
+            Image(Path("src/main/resources/sprites/red-hood-landing.png").toAbsolutePath().toUri().toURL().toString()),
+            50.0, 40.0,
+            0, 3,
+            0, 0,
+            0.0, 0.0,
+            12.0, true, true
         ),
     )
 
@@ -190,8 +209,14 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             vel.x *= PlayerConstants.AIR_DRAG
         }
 
-        val timeSinceOnGround = (System.nanoTime() - lastOnGround)/1e9
+        //air/ground calculations
+        timeSinceOnGround = (System.nanoTime() - lastOnGround)/1e9
         onGround = onGround || timeSinceOnGround < 0.083
+        if(onGround && (System.nanoTime() - lastInAir)/1e9 < 0.01) {
+            justLanded = true
+        }
+        if(!onGround) lastInAir = System.nanoTime()
+
         if (timeSinceOnGround < 0.3) {
             vel.y += PlayerConstants.GRAVITY
         } else {
@@ -280,11 +305,11 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
 
         //reset state
         onGround = false
+        justLanded = false
     }
 
     override fun collide(e: Entity) {
         //do stuff based on which entity we have collided with
-        //TODO("add logic for entity-entity collision")
     }
 
     fun getAnimationState(): Int {
@@ -294,9 +319,25 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             lastDir = (vel.x > 0.0)
         }
 
-//        if (transitioning && animations[transitionSource].finished) {
-//            return transitionTarget
-//        }
+        if(justLanded) {
+            transitioning = true
+            if(xDir) {
+                transitionSource = 15
+                transitionTarget = 1
+            } else {
+                transitionSource = 14
+                transitionTarget = 0
+            }
+        }
+
+        if (transitioning) {
+            if (animations[transitionSource].finished) {
+                transitioning = false
+                return transitionTarget
+            } else {
+                return transitionSource
+            }
+        }
 
         //grappling animations take priority
         if (throwingGrapple) {
