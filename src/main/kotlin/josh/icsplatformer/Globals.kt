@@ -1,7 +1,7 @@
 package josh.icsplatformer
 
-const val SCREEN_WIDTH = 736.0
-const val SCREEN_HEIGHT = 448.0
+const val SCREEN_WIDTH = 896.0
+const val SCREEN_HEIGHT = 528.0
 
 /*
  * THREAD GLOBALS
@@ -28,5 +28,5 @@ object PlayerConstants {
 /*
  * TILE MAP GLOBALS
  */
-const val TILE_WIDTH: Double = 32.0
-const val TILE_HEIGHT: Double = 32.0
+const val TILE_WIDTH: Double = 16.0
+const val TILE_HEIGHT: Double = 16.0
