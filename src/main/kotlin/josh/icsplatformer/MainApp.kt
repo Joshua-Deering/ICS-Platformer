@@ -8,27 +8,55 @@ import java.io.File
 
 class MainApp : Application() {
     private lateinit var gameloop: GameLoop
+    private lateinit var stage: Stage
+    private lateinit var menuScene: Scene
+    private lateinit var gameScene: Scene
+    private var begunThread = false
 
     override fun start(stage: Stage) {
+        this.stage = stage
+
+        val fMenu = File("src/main/resources/josh/icsplatformer/menu.fxml")
+        val menuLoader = FXMLLoader(fMenu.toURI().toURL())
+        menuScene = Scene(menuLoader.load(), SCREEN_WIDTH, SCREEN_HEIGHT)
+        menuLoader.getController<Menu>().setCallback{event ->
+            switchToGame()
+        }
+
         val f = File("src/main/resources/josh/icsplatformer/main-view.fxml")
-        val fxmlLoader = FXMLLoader(f.toURI().toURL())
-        val scene = Scene(fxmlLoader.load(), SCREEN_WIDTH, SCREEN_HEIGHT)
+        val gameFxmlLoader = FXMLLoader(f.toURI().toURL())
+        gameScene = Scene(gameFxmlLoader.load(), SCREEN_WIDTH, SCREEN_HEIGHT)
+        gameFxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D.isImageSmoothing = false
+
+        val keyListener = KeyListener(gameScene)
+        gameloop = GameLoop({-> switchToMenu()}, gameFxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
+
         stage.title = "ICS-Platformer"
-        stage.scene = scene
+        stage.scene = menuScene
         stage.isResizable = false
         stage.requestFocus()
-        fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D.isImageSmoothing = false
-
-        val keyListener = KeyListener(stage.scene)
-        gameloop = GameLoop(fxmlLoader.getController<Controller>().gameCanvas.graphicsContext2D, keyListener)
-        gameloop.start()
 
         stage.show()
     }
 
     override fun stop() {
         println("stopping")
-        gameloop.stop()
+        if(this::gameloop.isInitialized) {
+            gameloop.end()
+        }
+    }
+
+    fun switchToMenu() {
+        stage.scene = menuScene
+    }
+    fun switchToGame() {
+        println("switching to game")
+        gameloop.start()
+        if(!begunThread) {
+            gameloop.beginThread()
+            begunThread = true
+        }
+        stage.scene = gameScene
     }
 }
 

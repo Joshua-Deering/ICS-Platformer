@@ -11,6 +11,7 @@ import kotlin.io.path.Path
 import kotlin.math.min
 import java.awt.geom.Rectangle2D.Double as Rect
 import josh.icsplatformer.DRAW_HITBOXES
+import josh.icsplatformer.SCREEN_HEIGHT
 import josh.icsplatformer.map.TileMap
 import kotlin.math.abs
 import kotlin.math.pow
@@ -23,6 +24,11 @@ import kotlin.math.sqrt
  * @property pos This players Hitbox
  */
 class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener, val tileMapScroll: Double) : Entity(gc, pos) {
+
+    //public for gameloop to keep track of player
+    var alive = true
+    var dying = false
+
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var timeSinceOnGround: Double = 0.0
@@ -176,6 +182,14 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             0.0, 0.0,
             12.0, true, true
         ),
+        SpriteAnimation( //dying: 16
+            Image(Path("src/main/resources/sprites/red-hood-slide.png").toAbsolutePath().toUri().toURL().toString()),
+            50.0, 40.0,
+            0, 3,
+            0, 0,
+            0.0, 0.0,
+            2.0, true, true
+        ),
     )
 
     /**
@@ -202,6 +216,10 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
      * @param dt Second(s) since last frame/update
      */
     override fun update(dt: Double) {
+        if(pos.x < 0.0 || pos.y > SCREEN_HEIGHT) {
+            dying = true
+        }
+
         //velocity adjustments (i.e drag, etc)
         if(onGround) {
             vel.x *= PlayerConstants.GROUND_DRAG
@@ -317,6 +335,16 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         val xDir = vel.x > 0
         if (xMag <= 15.0 && xMag >= 0.1) {
             lastDir = (vel.x > 0.0)
+        }
+
+        if (dying) {
+            if (animations[transitionSource].finished) {
+                alive = false
+            }
+            transitioning = true
+            transitionSource = 16
+            transitionTarget = 16
+            return transitionSource
         }
 
         if(justLanded) {
