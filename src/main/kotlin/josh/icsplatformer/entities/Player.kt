@@ -183,12 +183,12 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             12.0, true, true
         ),
         SpriteAnimation( //dying: 16
-            Image(Path("src/main/resources/sprites/red-hood-slide.png").toAbsolutePath().toUri().toURL().toString()),
+            Image(Path("src/main/resources/sprites/red-hood-dying.png").toAbsolutePath().toUri().toURL().toString()),
             50.0, 40.0,
-            0, 3,
+            0, 4,
             0, 0,
             0.0, 0.0,
-            2.0, true, true
+            6.0, true, true
         ),
     )
 
