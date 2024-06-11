@@ -17,7 +17,7 @@ class SpriteAnimation(val img: Image, val spriteWidth: Double, val spriteHeight:
             if(!finished) {curX} else {endX} * spriteWidth + offsetX,
             if(!finished) {curY} else {endY} * spriteHeight + offsetY,
             spriteWidth, spriteHeight,
-            if(reflect) {x + spriteWidth} else {x}, y,
+            if(reflect) {x + width} else {x}, y,
             if(reflect) {-width} else {width}, height
         )
     }
