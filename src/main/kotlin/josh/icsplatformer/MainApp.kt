@@ -10,6 +10,7 @@ class MainApp : Application() {
     private lateinit var gameloop: GameLoop
     private lateinit var stage: Stage
     private lateinit var menuScene: Scene
+    private lateinit var menuController: Menu
     private lateinit var gameScene: Scene
     private var begunThread = false
 
@@ -19,7 +20,8 @@ class MainApp : Application() {
         val fMenu = File("src/main/resources/josh/icsplatformer/menu.fxml")
         val menuLoader = FXMLLoader(fMenu.toURI().toURL())
         menuScene = Scene(menuLoader.load(), SCREEN_WIDTH, SCREEN_HEIGHT)
-        menuLoader.getController<Menu>().setCallback{event ->
+        menuController = menuLoader.getController<Menu>()
+        menuController.setCallback{event ->
             switchToGame()
         }
 
@@ -47,6 +49,7 @@ class MainApp : Application() {
     }
 
     fun switchToMenu() {
+        menuController.loadHighScores()
         stage.scene = menuScene
     }
     fun switchToGame() {

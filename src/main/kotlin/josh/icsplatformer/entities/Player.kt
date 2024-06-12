@@ -1,5 +1,6 @@
 package josh.icsplatformer.entities
 
+//imports
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
@@ -29,6 +30,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
     var alive = true
     var dying = false
 
+    //physics variables
     private var onGround: Boolean = false
     private var lastOnGround: Long = System.nanoTime()
     private var timeSinceOnGround: Double = 0.0
@@ -216,7 +218,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
      * @param dt Second(s) since last frame/update
      */
     override fun update(dt: Double) {
-        if(pos.x < 0.0 || pos.y > SCREEN_HEIGHT) {
+        if(pos.x < 0.0 || pos.y + pos.height > SCREEN_HEIGHT) {
             dying = true
         }
 
