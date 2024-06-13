@@ -26,4 +26,8 @@ class KeyListener(scene: Scene) {
     fun keyDown(key: String): Boolean {
         return keysDown.contains(KeyCode.valueOf(key))
     }
+
+    fun reset() {
+        keysDown = mutableSetOf<KeyCode>()
+    }
 }

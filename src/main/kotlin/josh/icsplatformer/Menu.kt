@@ -28,16 +28,23 @@ class Menu {
             hsBox.children.removeAt(0)
         }
         val hsLabel = Label("High Scores:")
-        hsLabel.style = "-fx-text-fill: black; -fx-font-size: 20px; -fx-font-family: 'Arial';"
+        hsLabel.style =  "-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';"
         hsBox.children.add(hsLabel)
 
         val hs = File("src/main/resources/highscores/highscores.txt")
         val lines = hs.readLines()
-        for (l in lines) {
+        for ((i, l) in lines.iterator().withIndex()) {
             val splitStr = l.split(",")
             val date = LocalDateTime.parse(splitStr[1])
-            val label = Label("${splitStr[0].toDouble().roundToInt()} (${date.month} ${date.year}, ${date.hour%12}:${date.minute} ${if(date.hour > 12){"PM"}else{"AM"}})")
-            label.style = "-fx-text-fill: black; -fx-font-size: 20px; -fx-font-family: 'Arial';"
+            val minuteLabel = if(date.minute < 10) {
+                "0" + date.minute
+            } else {
+                date.minute.toString()
+            }
+            val label = Label("${i+1}: ${splitStr[0].toDouble().roundToInt()} " +
+                    "(${date.month.toString().lowercase().replaceFirstChar { c -> c.uppercase() }} ${date.dayOfMonth}, ${date.year}," +
+                    " ${date.hour%12}:${minuteLabel} ${if(date.hour > 12){"PM"}else{"AM"}})")
+            label.style =  "-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';"
             hsBox.children.add(label)
         }
     }
