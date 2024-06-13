@@ -10,8 +10,8 @@ object MapTextures {
 
     fun drawTexture(gc: GraphicsContext, sprite: Int, x: Double, y: Double, width: Double, height: Double) {
         gc.drawImage(spriteSheet,
-            if(sprite == 5) {sprite * SPRITE_DIMENSIONS} else {(sprite - 1) * SPRITE_DIMENSIONS}, 0.0,
-            if(sprite == 5) {-SPRITE_DIMENSIONS} else {SPRITE_DIMENSIONS}, SPRITE_DIMENSIONS,
+            if(sprite == 5 || sprite == 10) {sprite * SPRITE_DIMENSIONS} else {(sprite - 1) * SPRITE_DIMENSIONS}, 0.0,
+            if(sprite == 5 || sprite == 10) {-SPRITE_DIMENSIONS} else {SPRITE_DIMENSIONS}, SPRITE_DIMENSIONS,
             x, y, width, height)
     }
 }

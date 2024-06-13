@@ -23,9 +23,9 @@ class BackgroundRenderer(val scrollSpeed: Double = 0.0) {
     )
     val offsets = mutableListOf<Double>(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
 
-    fun showBackground(gc: GraphicsContext, startLayer: Int, endLayer: Int) {
+    fun showBackground(gc: GraphicsContext, startLayer: Int, endLayer: Int, shouldMove: Boolean) {
         for (i in startLayer..endLayer) {
-            offsets[i] -= scrollSpeed * i * 0.01
+            if(shouldMove) offsets[i] -= scrollSpeed * i * 0.01
             gc.drawImage(layers[i], 0.0, 396.0, 928.0, 306.0, 0.0 + offsets[i], 0.0, SCREEN_WIDTH + 90.0, SCREEN_HEIGHT)
             gc.drawImage(layers[i], 0.0, 396.0, 928.0, 306.0, 0.0 + offsets[i] + SCREEN_WIDTH + 90.0, 0.0, SCREEN_WIDTH + 90.0, SCREEN_HEIGHT)
             if (offsets[i] < -(SCREEN_WIDTH+90.0)) {

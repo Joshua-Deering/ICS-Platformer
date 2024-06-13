@@ -5,6 +5,7 @@ import java.io.File
 
 class ChunkLoader {
     lateinit var possibleChunks: MutableList<Chunk>
+    var curChunk = 1
 
     fun loadChunksFromFile(gc: GraphicsContext, file: String) {
         val lines = File(file).useLines{it -> it.toList()}
@@ -36,7 +37,9 @@ class ChunkLoader {
     }
 
     fun genChunk(scrollDist: Double): Chunk {
-        return possibleChunks[2].clone()
+        curChunk++
+        if(curChunk > possibleChunks.lastIndex) curChunk = 1
+        return possibleChunks[curChunk].clone()
     }
 
     fun createChunkFromStrings(gc: GraphicsContext, offset: Double, lines: List<String>): Chunk {

@@ -5,10 +5,11 @@ import josh.icsplatformer.TILE_HEIGHT
 import josh.icsplatformer.TILE_WIDTH
 import java.awt.geom.Rectangle2D.Double as Rect
 
-class TileMap(val chunkLoader: ChunkLoader, val chunks: MutableList<Chunk>, var scrollVel: Double) {
+class TileMap(val chunkLoader: ChunkLoader, val chunks: MutableList<Chunk>, var scrollVel: Double, val scrollScaling: Double) {
     var scrollDist = 0.0
 
     fun update(dt: Double) {
+        scrollVel -= scrollScaling * dt
         scrollDist += scrollVel * dt
         var chunksToAdd = mutableListOf<Chunk>()
         var chunksToRemove = mutableListOf<Chunk>()
