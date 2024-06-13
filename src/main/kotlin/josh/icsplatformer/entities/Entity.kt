@@ -3,6 +3,7 @@ package josh.icsplatformer.entities
 import javafx.scene.canvas.GraphicsContext
 import java.awt.geom.Rectangle2D.Double as Rect
 
+//abstract class for all entities
 abstract class Entity(val gc: GraphicsContext, var pos: Rect) {
     //called every frame, to render sprites to the screen
     abstract fun show()
