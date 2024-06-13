@@ -6,18 +6,106 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="josh.icsplatformer.Menu"
-      spacing="15">
-    <Button onAction="#buttonPressed" focusTraversable="false">
-            <graphic>
-                <ImageView fitWidth="125" preserveRatio="true">
-                    <Image url="@../../../resources/sprites/start-btn.png"/>
-                </ImageView>
-            </graphic>
-    </Button>
-    <VBox fx:id="hsBox">
-    </VBox>
-</HBox>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Rectangle2D?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="josh.icsplatformer.Menu">
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0011.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0010.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0009.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0008.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0007.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0006.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0005.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0004.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0003.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0002.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0001.png"/>
+    </ImageView>
+    <ImageView fitWidth="928.0" fitHeight="528">
+        <viewport>
+            <Rectangle2D minY="396.0" width="928.0" height="306.0"/>
+        </viewport>
+        <Image url="@../../../resources/Background layers/Layer_0000.png"/>
+    </ImageView>
+    <GridPane prefWidth="896.0" prefHeight="528.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="40.0" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="20.0" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="40.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <VBox alignment="CENTER" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';" GridPane.columnIndex="0">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">How to Play:</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">Space for jump</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">A/D for left/right</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">W to grapple</Label>
+        </VBox>
+        <Button onAction="#buttonPressed" focusTraversable="false" GridPane.columnIndex="1">
+                <graphic>
+                    <ImageView fitWidth="125" preserveRatio="true">
+                        <Image url="@../../../resources/sprites/start-btn.png"/>
+                    </ImageView>
+                </graphic>
+        </Button>
+        <VBox fx:id="hsBox" GridPane.columnIndex="2" alignment="CENTER">
+        </VBox>
+    </GridPane>
+</StackPane>

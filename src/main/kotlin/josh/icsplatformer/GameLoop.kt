@@ -2,6 +2,8 @@ package josh.icsplatformer
 
 import javafx.application.Platform
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.paint.Color
+import javafx.scene.text.Font
 import josh.icsplatformer.entities.EntityManager
 import josh.icsplatformer.entities.Player
 import josh.icsplatformer.map.BackgroundRenderer
@@ -11,7 +13,9 @@ import java.io.File
 import java.time.LocalDateTime
 import kotlin.concurrent.thread
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 import java.awt.geom.Rectangle2D.Double as Rect
 
 //nanoseconds per tick/render
@@ -61,8 +65,8 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
     fun start() {
         chunkLoader = ChunkLoader()
         chunkLoader.loadChunksFromFile(gc, "src/main/resources/tilemaps/chunks.txt")
-        tileMap = TileMap(chunkLoader, chunkLoader.getChunks(0, 1), -40.0)
-        player = Player(gc, tileMap, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener, tileMapScroll = -40.0)
+        tileMap = TileMap(chunkLoader, mutableListOf(chunkLoader.possibleChunks[0].clone(), chunkLoader.possibleChunks[2].clone()), -70.0, 2.0)
+        player = Player(gc, tileMap, Rect(50.0, 100.0, 30.0, 36.0), keyListener = keyListener)
         entityManager = EntityManager(mutableListOf(player), tileMap)
         stopped = false
     }
@@ -70,23 +74,21 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
     fun stop() {
         stopped = true
         gc.clearRect(0.0, 0.0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        keyListener.reset()
 
         //write this score to the highscores file
         val hs = File("src/main/resources/highscores/highscores.txt")
         hs.createNewFile()
         val fileStr = hs.readLines().toMutableList()
         fileStr.add("${tileMap.scrollDist.absoluteValue},${LocalDateTime.now()}")
-        println(fileStr)
         val fileNums: MutableList<Pair<Double, String>> = fileStr.map{ str ->
             Pair(str.split(",")[0].toDouble().absoluteValue, str.split(",")[1])
         }.toMutableList()
         fileNums.sortBy{x -> x.first}
-        println(fileNums)
         var writeStr = ""
-        for (i in (0..min(9, fileNums.lastIndex)).reversed()) {
+        for (i in (max(fileNums.lastIndex-9, 0)..fileNums.lastIndex).reversed()) {
             writeStr += "${fileNums[i].first},${fileNums[i].second}\n"
         }
-        println(writeStr)
         hs.writeText(writeStr)
     }
 
@@ -96,21 +98,31 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
 
     private fun render() {
         gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
-        backgroundRenderer.showBackground(gc, 0, 10)
+        backgroundRenderer.showBackground(gc, 0, 10, !player.dying)
         //RENDER
         tileMap.show()
         entityManager.show()
+
+        gc.fill = Color.WHITE
+        gc.font = Font("Arial", 20.0)
+        gc.fillText("Score: ${tileMap.scrollDist.roundToInt().absoluteValue}", 10.0, 20.0)
+
+        if (player.dying) {
+            gc.fill = Color.WHITE
+            gc.font = Font("Arial", 200.0)
+            gc.fillText("Score:\n${tileMap.scrollDist.roundToInt().absoluteValue}", 10.0, 250.0)
+        }
     }
 
     private fun tick(dt: Double) {
         if (!player.alive) {
-            Platform.runLater(Runnable { parentCallback.invoke() })
             stop()
             println("player died")
+            Platform.runLater(Runnable { parentCallback.invoke() })
         }
 
         //UPDATE
-        tileMap.update(dt)
+        if(!player.dying) tileMap.update(dt)
         entityManager.update(dt)
 
         //COLLISION MANAGEMENT
