@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="ICS-Platformer-jar">
+  <artifact type="jar" name="ICS-Platformer-jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ICS_Platformer_jar</output-path>
     <root id="archive" name="ICS-Platformer-jar.jar">
       <element id="archive" name="ICS-Platformer.jar">

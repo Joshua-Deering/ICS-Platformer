@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
+import javafx.scene.transform.Rotate
 import josh.icsplatformer.KeyListener
 import josh.icsplatformer.PlayerConstants
 import josh.icsplatformer.lib.Vec2
@@ -14,7 +15,9 @@ import java.awt.geom.Rectangle2D.Double as Rect
 import josh.icsplatformer.DRAW_HITBOXES
 import josh.icsplatformer.SCREEN_HEIGHT
 import josh.icsplatformer.map.TileMap
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -60,6 +63,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
     //sprite animations
     private var curAnimation = 0
     private val animations: List<SpriteAnimation> = createAnimations()
+    private val grappleImg = Image(Path("src/main/resources/sprites/grapple-hook.png").toAbsolutePath().toUri().toURL().toString())
 
     /**
      * Draws this player on the given GraphicsContextd
@@ -76,11 +80,18 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         //if the player is grappling, render the grapple hook/line
         if (grappling || throwingGrapple) {
             //grapple line
-            gc.stroke = Color.BLUE
+            gc.stroke = Color.WHITE
             gc.strokeLine(pos.x + grappleOffset.x, pos.y + grappleOffset.y, grapplePos.x, grapplePos.y)
             //grapple hook
-            gc.fill = Color.RED
-            gc.fillRect(grapplePos.x, grapplePos.y, 5.0, 5.0)
+            gc.save()
+            val dirVec = Vec2(grappleTargetPos.x - grappleOffset.x - pos.x, grappleTargetPos.y - grappleOffset.y - pos.y)
+            val dirVecMagnitude = sqrt((grappleTargetPos.x - grappleOffset.x - pos.x).pow(2) + (grappleTargetPos.y - grappleOffset.y - pos.y).pow(2))
+            dirVec.scalarMultAssign(1.0 / dirVecMagnitude)
+            dirVec.scalarMultAssign(8.0)
+            val angle = atan2(grapplePos.y - (grappleOffset.y + pos.y), grapplePos.x - (grappleOffset.x + pos.x)) * (180.0 / PI) + 90.0
+            rotate(gc, angle, grapplePos.x - dirVec.x, grapplePos.y - dirVec.y)
+            gc.drawImage(grappleImg, 0.0, 0.0, 16.0, 16.0, grapplePos.x - 5.0 - dirVec.x, grapplePos.y - 10.0 - dirVec.y, 10.0, 10.0)
+            gc.restore()
         }
     }
 
@@ -352,6 +363,11 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             }
         }
         return false
+    }
+
+    fun rotate(gc: GraphicsContext, angle: Double, px: Double, py: Double) {
+        val r = Rotate(angle, px, py);
+        gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
     }
 
     override fun collideWithMap(other: Rect) {

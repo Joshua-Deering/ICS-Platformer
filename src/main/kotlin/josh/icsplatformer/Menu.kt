@@ -36,6 +36,7 @@ class Menu {
         for ((i, l) in lines.iterator().withIndex()) {
             val splitStr = l.split(",")
             val date = LocalDateTime.parse(splitStr[1])
+            val hourLabel = if(date.hour % 12 == 0) {12} else {date.hour % 12}
             val minuteLabel = if(date.minute < 10) {
                 "0" + date.minute
             } else {
@@ -43,7 +44,7 @@ class Menu {
             }
             val label = Label("${i+1}: ${splitStr[0].toDouble().roundToInt()} " +
                     "(${date.month.toString().lowercase().replaceFirstChar { c -> c.uppercase() }} ${date.dayOfMonth}, ${date.year}," +
-                    " ${date.hour%12}:${minuteLabel} ${if(date.hour > 12){"PM"}else{"AM"}})")
+                    " ${hourLabel}:${minuteLabel} ${if(date.hour > 12){"PM"}else{"AM"}})")
             label.style =  "-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';"
             hsBox.children.add(label)
         }
