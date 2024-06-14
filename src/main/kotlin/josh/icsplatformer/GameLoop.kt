@@ -47,11 +47,11 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
                 val dRender = System.nanoTime() - lastRender
 
                 if(dTick > TIME_PER_TICK) {
-                    tick(dTick/1e9)
+                    Platform.runLater(Runnable{tick(dTick/1e9)})
                     lastTick = System.nanoTime()
                 }
                 if(dRender > TIME_PER_RENDER) {
-                    render()
+                    Platform.runLater(Runnable{render()})
                     lastRender = System.nanoTime()
                 }
             }
