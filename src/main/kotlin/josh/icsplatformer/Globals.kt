@@ -1,3 +1,13 @@
+/*
+ * Globals.kt
+ * Name: Joshua Deering
+ * Student #: 334987377
+ * Date: June 10, 2024
+ * Class: 4U
+ * Description:
+ * File to store constant global variables
+ */
+
 package josh.icsplatformer
 
 const val SCREEN_WIDTH = 896.0
@@ -23,6 +33,8 @@ object PlayerConstants {
     const val JUMP_STRENGTH = 400.0
     const val GROUND_DRAG = 0.92
     const val AIR_DRAG = 0.98
+    const val MAX_VEL_X_G = 100.0
+    const val MAX_VEL_X_A = 150.0
 }
 
 /*

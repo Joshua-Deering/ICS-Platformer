@@ -1,3 +1,13 @@
+/*
+ * EntityManager.kt
+ * Name: Joshua Deering
+ * Student #: 334987377
+ * Date: June 10, 2024
+ * Class: 4U
+ * Description:
+ * manager class, to manage all entities in the game
+ */
+
 package josh.icsplatformer.entities
 
 import josh.icsplatformer.map.TileMap

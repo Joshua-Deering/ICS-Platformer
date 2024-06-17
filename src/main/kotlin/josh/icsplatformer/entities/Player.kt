@@ -1,3 +1,15 @@
+/*
+ * Player.kt
+ * Name: Joshua Deering
+ * Student #: 334987377
+ * Date: June 10, 2024
+ * Class: 4U
+ * Description:
+ * Main player class, manages all things for the player
+ * (physics, rendering, updating, etc)
+ */
+
+
 package josh.icsplatformer.entities
 
 //imports
@@ -25,7 +37,10 @@ import kotlin.math.sqrt
  * Main Player class
  *
  * @property gc Graphics context to draw to
- * @property pos This players Hitbox
+ * @property tileMap the tile map associated with this player
+ * @property pos the position of this player
+ * @property vel the velocity of this player (default 0.0)
+ * @property keyListener the key listener associated with this scene, for keyboard input
  */
 class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var vel: Vec2 = Vec2(), private val keyListener: KeyListener) : Entity(gc, pos) {
 
@@ -80,16 +95,20 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         //if the player is grappling, render the grapple hook/line
         if (grappling || throwingGrapple) {
             //grapple line
-            gc.stroke = Color.WHITE
+            gc.stroke = Color.SADDLEBROWN
             gc.strokeLine(pos.x + grappleOffset.x, pos.y + grappleOffset.y, grapplePos.x, grapplePos.y)
             //grapple hook
             gc.save()
+            //get direction towards grapple target
             val dirVec = Vec2(grappleTargetPos.x - grappleOffset.x - pos.x, grappleTargetPos.y - grappleOffset.y - pos.y)
             val dirVecMagnitude = sqrt((grappleTargetPos.x - grappleOffset.x - pos.x).pow(2) + (grappleTargetPos.y - grappleOffset.y - pos.y).pow(2))
             dirVec.scalarMultAssign(1.0 / dirVecMagnitude)
             dirVec.scalarMultAssign(8.0)
+            //find the angle between the player and the grappling hook
             val angle = atan2(grapplePos.y - (grappleOffset.y + pos.y), grapplePos.x - (grappleOffset.x + pos.x)) * (180.0 / PI) + 90.0
+            //rotate the image by the angle
             rotate(gc, angle, grapplePos.x - dirVec.x, grapplePos.y - dirVec.y)
+            //draw the rotated grapple image onto the canvas
             gc.drawImage(grappleImg, 0.0, 0.0, 16.0, 16.0, grapplePos.x - 5.0 - dirVec.x, grapplePos.y - 10.0 - dirVec.y, 10.0, 10.0)
             gc.restore()
         }
@@ -124,7 +143,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
                     grappling = true
                 }
                 //check if the grapple has exceeded its maximum length
-                if(sqrt((grapplePos.x - pos.x).pow(2) + (pos.y - grapplePos.y).pow(2)) > 400.0) {
+                if(sqrt((grapplePos.x - pos.x).pow(2) + (pos.y - grapplePos.y).pow(2)) > 380.0) {
                     throwingGrapple = false
                     grappling = false
                     grapplePos = Vec2(pos.x + grappleOffset.x, pos.y + grappleOffset.y)
@@ -183,13 +202,19 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             throwingGrapple = false
         }
 
-        //apply velocity cap
-        if (onGround) {
+        //apply velocity caps (different for different player states)
+        if(grappling) {
+            //limit velocity during grappling
+            vel.clamp(Vec2(-500.0, -400.0), Vec2(PlayerConstants.MAX_VEL_X_A - tileMap.scrollVel + 100, 400.0))
+        } else if(!canGrapple && (vel.x > PlayerConstants.MAX_VEL_X_G - tileMap.scrollVel || vel.x < -PlayerConstants.MAX_VEL_X_G)) {
+            //limit velocity after grappling
+            vel.x *= 0.97
+        } else if (onGround) {
             //limit velocity on ground
-            vel.clamp(Vec2(-200.0, -400.0), Vec2(200.0, 400.0))
+            vel.clamp(Vec2(-PlayerConstants.MAX_VEL_X_G, -400.0), Vec2(PlayerConstants.MAX_VEL_X_G - tileMap.scrollVel, 400.0))
         } else {
             //limit velocity in air
-            vel.clamp(Vec2(-400.0, -400.0), Vec2(400.0, 400.0))
+            vel.clamp(Vec2(-PlayerConstants.MAX_VEL_X_A, -400.0), Vec2(PlayerConstants.MAX_VEL_X_A - tileMap.scrollVel, 400.0))
         }
 
         //add the velocity to the displacement
@@ -216,10 +241,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         justLanded = false
     }
 
-    override fun collide(e: Entity) {
-        //do stuff based on which entity we have collided with
-    }
-
+    //applies physics to the player, and accounts for keyboard input
     fun applyPhysics() {
         //velocity adjustments (i.e drag, etc)
         if(onGround) {
@@ -227,6 +249,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         } else {
             vel.x *= PlayerConstants.AIR_DRAG
         }
+        if(vel.x < 0.1 && vel.x > -0.1) vel.x = 0.0
 
         //update physics variables based on when the player was last on the ground
         timeSinceOnGround = (System.nanoTime() - lastOnGround)/1e9
@@ -256,10 +279,10 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
 
         //if the user is pressing A or D, move the player left and right, respectively
         if (keyListener.keyDown("D")) {
-            vel.x += if (onGround) 13.0 else { 6.0 }
+            vel.x += if (onGround) {(PlayerConstants.MAX_VEL_X_G - tileMap.scrollVel)/13.0} else {(PlayerConstants.MAX_VEL_X_A - tileMap.scrollVel)/14.0}
         }
         if (keyListener.keyDown("A")) {
-            vel.x -= if (onGround) 13.0 else { 6.0 }
+            vel.x -= if (onGround) {(PlayerConstants.MAX_VEL_X_G)/13.0} else {PlayerConstants.MAX_VEL_X_A/14.0}
         }
     }
 
@@ -272,8 +295,9 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             lastDir = (vel.x > 0.0)
         }
 
-        //if player is dying, that animation take priority
+        //if player is dying, that animation takes priority
         if (dying) {
+            //the dying animation has finished, so the player has fully died.
             if (animations[transitionSource].finished) {
                 alive = false
             }
@@ -283,6 +307,8 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             return transitionSource
         }
 
+        //the player just landed on the ground,
+        //start a transition into the idle state
         if(justLanded) {
             transitioning = true
             if(xDir) {
@@ -294,6 +320,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
             }
         }
 
+        //return the current transition, if the player is currently in a transition state
         if (transitioning) {
             if (animations[transitionSource].finished) {
                 transitioning = false
@@ -306,27 +333,27 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         //grappling animations take priority
         if (throwingGrapple) {
             return if (onGround) {
-                if (xDir) {
+                if (xDir) { //ground grapple throwing animations
                     9
                 } else {
                     8
                 }
             } else {
-                if (xDir) {
+                if (xDir) { //air grapple throwing animations
                     11
                 } else {
                     10
                 }
             }
         } else if (grappling) {
-            return if (grappleDir) {
+            return if (grappleDir) { //air grappling animations
                 13
             } else {
                 12
             }
         }
 
-        return if (!onGround) { //is in the air
+        return if (!onGround) { //player is in the air
             if (vel.y >= 0.0) {
                 if (xDir) {
                     5
@@ -355,6 +382,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         }
     }
 
+    //helper function to check if the grappling hook has collided with the map
     fun checkGrappleCollisions(): Boolean {
         for (hb in tileMap.getHitboxes()) {
             if (hb.intersects(grapplePos.x, grapplePos.y, 3.0, 3.0)) {
@@ -365,11 +393,13 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         return false
     }
 
+    //helper function to draw a rotated image
     fun rotate(gc: GraphicsContext, angle: Double, px: Double, py: Double) {
         val r = Rotate(angle, px, py);
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
     }
 
+    //function called whenever the player collides with the map
     override fun collideWithMap(other: Rect) {
         val collisionRect = pos.createIntersection(other)
 
@@ -403,6 +433,7 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         }
     }
 
+    //helper function to create the list of all the animations
     fun createAnimations(): List<SpriteAnimation> {
         return listOf(
             SpriteAnimation( //idle-left: 0
@@ -542,5 +573,9 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
                 6.0, true, true
             ),
         )
+    }
+
+    override fun collide(e: Entity) {
+
     }
 }

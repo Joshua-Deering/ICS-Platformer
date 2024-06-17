@@ -1,3 +1,13 @@
+/*
+ * Entity.kt
+ * Name: Joshua Deering
+ * Student #: 334987377
+ * Date: June 10, 2024
+ * Class: 4U
+ * Description:
+ * Abstract class for all entities
+ */
+
 package josh.icsplatformer.entities
 
 import javafx.scene.canvas.GraphicsContext
