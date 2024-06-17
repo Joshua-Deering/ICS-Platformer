@@ -40,13 +40,17 @@ class KeyListener(scene: Scene) {
         }
     }
 
-    //returns whether or not a key is currently pressed
+    /**
+     * returns whether or not a key is currently pressed
+     */
     fun keyDown(key: String): Boolean {
         //if the key is in the list, it is currently being pressed
         return keysDown.contains(KeyCode.valueOf(key))
     }
 
-    //resets the keys-down list
+    /**
+     * resets the keys-down list
+     */
     fun reset() {
         keysDown = mutableSetOf<KeyCode>()
     }

@@ -17,21 +17,28 @@ import josh.icsplatformer.map.TileMap
  * also checks collisions each frame and calls the appropriate method in case of a collision
  */
 class EntityManager(private var entities: MutableList<Entity> = mutableListOf(), private val tileMap: TileMap) {
-    //updates every entity
+    /**
+     * updates every entity
+     * @param dt Time since the last frame
+     */
     fun update(dt: Double) {
         for (e in entities) {
             e.update(dt)
         }
     }
 
-    //renders every entity
+    /**
+     * renders every entity
+     */
     fun show() {
         for (e in entities) {
             e.show()
         }
     }
 
-    //check collisions for every entity
+    /**
+     * checks collisions for every entity
+     */
     fun checkCollisions() {
         //sort hitboxes to more efficiently check collisions
         quickSort(entities, 0, entities.size)
@@ -63,7 +70,9 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
         }
     }
 
-    //quicksort method to sort hitboxes
+    /**
+     * quicksort method to sort hitboxes
+     */
     private fun quickSort(arr: MutableList<Entity>, l: Int, r: Int) {
         if (arr.size == 1 || arr.isEmpty()) return
         if (l < r) {
@@ -74,7 +83,9 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
         }
     }
 
-    //helper function for the quicksort function
+    /**
+     * helper function for the quicksort method
+     */
     private fun partition(arr: MutableList<Entity>, l: Int, r: Int): Int {
 
         val pivot = arr[r].pos.minX
@@ -91,7 +102,10 @@ class EntityManager(private var entities: MutableList<Entity> = mutableListOf(),
         return i+1
     }
 
-    //helper function for the quicksort function
+    /**
+     * helper method for the quicksort function,
+     * swaps two elements in a list
+     */
     private fun<T> swap(arr: MutableList<T>, i1: Int, i2: Int) {
         val tmp = arr[i1]
         arr[i1] = arr[i2]

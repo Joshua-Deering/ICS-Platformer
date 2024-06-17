@@ -31,13 +31,18 @@ class Menu {
 
     lateinit var callback: (event: ActionEvent) -> Unit
 
+    /**
+     * called when this menu screen is created
+     */
     @FXML
     fun initialize() {
         //on initialization, load the highscores
         loadHighScores()
     }
 
-    //loads the highscores from the highscores file
+    /**
+     * loads the highscores from the highscores file
+     */
     fun loadHighScores() {
         //if the highscores box is already populated, remove its contents
         if (hsBox.children.lastIndex >= 0) {
@@ -71,12 +76,16 @@ class Menu {
         }
     }
 
-    //call the parent callback for changing screens when the button is pressed
+    /**
+     * calls the parent callback for changing screens when the button is pressed
+     */
     fun buttonPressed(event: ActionEvent) {
         callback.invoke(event)
     }
 
-    //setter method to set the parent callback
+    /**
+     * setter method to set the parent callback
+     */
     fun setCallback(cb: (event: ActionEvent) -> Unit): Boolean {
         callback = cb
         return true

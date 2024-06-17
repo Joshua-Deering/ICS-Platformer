@@ -241,7 +241,9 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         justLanded = false
     }
 
-    //applies physics to the player, and accounts for keyboard input
+    /**
+     * applies physics to the player, and accounts for keyboard input
+     */
     fun applyPhysics() {
         //velocity adjustments (i.e drag, etc)
         if(onGround) {
@@ -286,7 +288,10 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         }
     }
 
-    //returns what the current animation should be, based on the player's velocity
+    /**
+     * returns what the current animation should be, based on the player's velocity
+     * @return The index of the current animation that should be playing
+     */
     fun getAnimationState(): Int {
         //find the player's left-right direction
         val xMag = abs(vel.x)
@@ -382,7 +387,10 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         }
     }
 
-    //helper function to check if the grappling hook has collided with the map
+    /**
+     * helper function to check if the grappling hook has collided with the map
+     * @return Whether or not the grappling hook has collided with the map
+     */
     fun checkGrappleCollisions(): Boolean {
         for (hb in tileMap.getHitboxes()) {
             if (hb.intersects(grapplePos.x, grapplePos.y, 3.0, 3.0)) {
@@ -393,13 +401,23 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         return false
     }
 
-    //helper function to draw a rotated image
+    /**
+     * helper function to draw a rotated image
+     * @param gc Graphics context to rotate
+     * @param angle angle to rotate by
+     * @param px x-position to rotate around
+     * @param py y-position to rotate around
+     */
     fun rotate(gc: GraphicsContext, angle: Double, px: Double, py: Double) {
         val r = Rotate(angle, px, py);
         gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
     }
 
-    //function called whenever the player collides with the map
+    /**
+     * called whenever the player collides with the map,
+     * applies physics relating to colliding to the map and
+     * sets player state appropriately
+     */
     override fun collideWithMap(other: Rect) {
         val collisionRect = pos.createIntersection(other)
 
@@ -433,7 +451,10 @@ class Player(gc: GraphicsContext, val tileMap: TileMap, pos: Rect, private var v
         }
     }
 
-    //helper function to create the list of all the animations
+    /**
+     * creates a list of all the animations
+     * @return The list of SpriteAnimations
+     */
     fun createAnimations(): List<SpriteAnimation> {
         return listOf(
             SpriteAnimation( //idle-left: 0

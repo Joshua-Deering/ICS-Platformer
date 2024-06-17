@@ -32,6 +32,10 @@ class MainApp : Application() {
     //variable for the current stage (the window)
     private lateinit var stage: Stage
 
+    /**
+     * called when this app starts
+     * @param stage The stage object for the app
+     */
     override fun start(stage: Stage) {
         this.stage = stage
 
@@ -65,7 +69,9 @@ class MainApp : Application() {
         stage.show()
     }
 
-    //stops the whole app
+    /**
+     * called when the app is closed, ends gameloop thread
+     */
     override fun stop() {
         //stop the gameloop, if it exists
         if(this::gameloop.isInitialized) {
@@ -73,13 +79,17 @@ class MainApp : Application() {
         }
     }
 
-    //switches the window to the menu screen
+    /**
+     * switches the window to the menu screen
+     */
     fun switchToMenu() {
         menuController.loadHighScores()
         stage.scene = menuScene
     }
 
-    //switches the window to the game screen
+    /**
+     * switches the window to the game screen
+     */
     fun switchToGame() {
         //start the gameloop
         gameloop.start()

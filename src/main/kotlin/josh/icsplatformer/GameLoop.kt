@@ -84,12 +84,16 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
         })
     }
 
-    //starts the thread for the gameloop
+    /**
+     * starts the thread for the gameloop
+     */
     fun beginThread() {
         gameThread.start()
     }
 
-    //starts or restarts an instance of this gameloop
+    /**
+     * starts or restarts an instance of this gameloop
+     */
     fun start() {
         //initialize all the game variables
         chunkLoader = ChunkLoader()
@@ -100,7 +104,9 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
         stopped = false
     }
 
-    //temporarily stops this gameloop instance
+    /**
+     * temporarily stops this gameloop instance
+     */
     fun stop() {
         //clear the screen and reset keylistener
         stopped = true
@@ -128,12 +134,16 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
         hs.writeText(writeStr)
     }
 
-    //ends this gameloop instance
+    /**
+     * ends this gameloop instance
+     */
     fun end() {
         GAME_STOPPED = true
     }
 
-    //render all game objects to the screen
+    /**
+     * renders all game objects to the screen
+     */
     private fun render() {
         //first clear the canvas
         gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
@@ -156,7 +166,10 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
         }
     }
 
-    //updates all game objects
+    /**
+     * updates all game objects
+     * @param dt The time since the last tick
+     */
     private fun tick(dt: Double) {
         //if the player has died, call the parant callback to switch back to the menu screen
         if (!player.alive) {

@@ -20,23 +20,49 @@ import kotlin.math.min
  */
 data class Vec2(var x: Double = 0.0, var y: Double = 0.0) {
 
-    //plus and minus operators (i.e a + b and a - b)
+    /**
+     * adds this vector with another vector
+     * @param other The other vector
+     * @return The sum of the two vectors
+     */
     operator fun plus(other: Vec2) = Vec2(x + other.x, y + other.y)
+    /**
+     * subtracts another vector from this vector
+     * @param other The other vector
+     * @return The result of the subtraction
+     */
     operator fun minus(other: Vec2) = Vec2(x - other.x, y - other.y)
 
-    //plus and minus assignment operators (i.e a -= b or a += b)
+    /**
+     * adds this vector with another vector,
+     * and assigns the result to this vector
+     * @param other The other vector
+     */
     operator fun plusAssign(other: Vec2) {
         x += other.x
         y += other.y
     }
+    /**
+     * subtracts another vector from this vector,
+     * and assigns the result to this vector
+     * @param other The other vector
+     */
     operator fun minusAssign(other: Vec2) {
         x -= other.x
         y -= other.y
     }
 
-    //multiplication operator (i.e a * b)
+    /**
+     * multiplies this vector with another vector
+     * @param other the other vector
+     * @return the product of the two vectors
+     */
     fun scalarMult(other: Double) = Vec2(x * other, y * other)
-    //multiplication assignment (i.e a *= b)
+    /**
+     * multiplies this vector with another vector,
+     * and assigns the result to this vector
+     * @param other the other vector
+     */
     fun scalarMultAssign(other: Double) {
         x *= other
         y *= other

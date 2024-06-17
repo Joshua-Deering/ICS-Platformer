@@ -60,6 +60,9 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
         return false
     }
 
+    /**
+     * renders this chunk to the canvas
+     */
     fun show() {
         //render each tile in this chunk
         for(tile in tiles) {
@@ -83,11 +86,18 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
         }
     }
 
-    //allows deep-cloning of chunks
+    /**
+     * clones this chunk
+     * @return a deep-copy of this chunk
+     */
     public override fun clone() = Chunk(gc, offset, tiles.toMutableList())
 
     companion object {
-        //function to generate tiles from a string
+        /**
+         * generates a list of tiles from a string
+         * @param str the string representation of the tiles
+         * @return A list of tiles contained in str
+         */
         fun genTiles(str: String): MutableList<Tile> {
             val tiles = mutableListOf<Tile>()
             for ((i, s) in str.split("\n").withIndex()) {
@@ -102,9 +112,13 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
             return tiles
         }
 
-        //function to load hitboxes based on the tiles in this chunk,
-        //finds vertically-adjacent tiles and gives them a shared hitbox,
-        //to minimize the amount of hitboxes in this chunk
+        /**
+         * function to load hitboxes based on the tiles in this chunk,
+         * finds vertically-adjacent tiles and gives them a shared hitbox,
+         * to minimize the amount of hitboxes in this chunk
+         * @param tiles The tiles to create hitboxes for
+         * @return A list of hitboxes, guarunteed to contain all of the tiles in the given list
+         */
         fun loadHitboxes(tiles: MutableList<Tile>): MutableList<Rect> {
             tiles.sort()
 
@@ -131,7 +145,12 @@ class Chunk(private val gc: GraphicsContext, var offset: Double, val tiles: Muta
             return hbs
         }
 
-        //helper method to create a hitbox based on a begin and end tile
+        /**
+         * creats a new hitbox
+         * @param start The tile where this hitbox starts
+         * @param end The tile where this hitbox ends
+         * @return The hitbox between the start and end tile
+         */
         fun createHitbox(start: Tile, end: Tile): Rect {
             return Rect(start.x * TILE_WIDTH, start.y * TILE_HEIGHT, TILE_WIDTH * (end.x - start.x+1), TILE_HEIGHT * (end.y - start.y+1))
         }
