@@ -67,7 +67,6 @@ class MainApp : Application() {
 
     //stops the whole app
     override fun stop() {
-        println("stopping")
         //stop the gameloop, if it exists
         if(this::gameloop.isInitialized) {
             gameloop.end()
@@ -82,7 +81,6 @@ class MainApp : Application() {
 
     //switches the window to the game screen
     fun switchToGame() {
-        println("switching to game")
         //start the gameloop
         gameloop.start()
         //if the gameloop has not been started before, start it

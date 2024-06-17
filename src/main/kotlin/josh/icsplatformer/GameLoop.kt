@@ -161,7 +161,6 @@ class GameLoop(val parentCallback: () -> Unit, private val gc: GraphicsContext, 
         //if the player has died, call the parant callback to switch back to the menu screen
         if (!player.alive) {
             stop()
-            println("player died")
             Platform.runLater(Runnable { parentCallback.invoke() })
         }
 

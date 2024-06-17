@@ -54,7 +54,6 @@ class ChunkLoader {
             }
             chunkLines.add(l)
         }
-        println("$easyChunksIdx, $medChunksIdx $hardChunksIdx")
         possibleChunks.add(createChunkFromStrings(gc, offset, chunkLines))
     }
 
