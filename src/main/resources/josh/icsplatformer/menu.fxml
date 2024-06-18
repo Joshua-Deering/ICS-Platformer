@@ -96,7 +96,9 @@
             <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">How to Play:</Label>
             <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">Space for jump</Label>
             <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">A/D for left/right</Label>
-            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">W to grapple</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">W to activate grapple</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">Use the mouse to position/aim</Label>
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-family: 'Arial';">the grappling hook</Label>
         </VBox>
         <Button onAction="#buttonPressed" focusTraversable="false" GridPane.columnIndex="1">
                 <graphic>
